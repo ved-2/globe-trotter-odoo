@@ -8,6 +8,11 @@ import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { CopilotPopup } from "@copilotkit/react-ui";
 import { useCopilotReadable, useCopilotAction } from "@copilotkit/react-core";
+import { Loader2 } from "lucide-react";
+import { useState } from "react";
+
+
+
 
 const TravelPlan = () => {
   const params = useParams();
@@ -18,6 +23,8 @@ const TravelPlan = () => {
   const [error, setError] = useState(null);
   const [chatMessages, setChatMessages] = useState([]);
   const chatKey = `chat_${params?.id || 'default'}`;
+
+  
 
   // Load chat messages from memory (not localStorage)
   const loadChatMessages = useCallback(() => {
