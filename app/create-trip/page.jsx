@@ -2,12 +2,10 @@
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-
-// --- All Constants are now in this file ---
 
 const SelectBudgetOptions = [
   {
@@ -31,37 +29,54 @@ const SelectBudgetOptions = [
 ];
 
 const SelectTravellersList = [
-  {
-    id: 1,
-    title: "Just Me",
-    desc: "A solo journey of discovery",
-    icon: "🧍",
-  },
-  {
-    id: 2,
-    title: "A Couple",
-    desc: "Romantic getaway for two",
-    icon: "👫",
-  },
-  {
-    id: 3,
-    title: "Family",
-    desc: "Fun adventures for the whole family",
-    icon: "👪",
-  },
-  {
-    id: 4,
-    title: "Friends",
-    desc: "A memorable trip with your crew",
-    icon: "🧑‍🤝‍🧑",
-  },
+  { id: 1, title: "Just Me", desc: "A solo journey of discovery", icon: "🧍" },
+  { id: 2, title: "A Couple", desc: "Romantic getaway for two", icon: "👫" },
+  { id: 3, title: "Family", desc: "Fun adventures for the whole family", icon: "👪" },
+  { id: 4, title: "Friends", desc: "A memorable trip with your crew", icon: "🧑‍🤝‍🧑" },
 ];
 
-const AI_PROMPT =
-  "Generate a travel itinerary for a trip to {location} for {noOfDays} days. The traveler is {traveler} on a {budget} budget. Provide a detailed, day-by-day plan with suggestions for places to visit, things to do, and places to eat. The response should be in JSON format with a root object key 'trip'. The 'trip' object should include 'location', 'noOfDays', 'budget', 'traveler', and a 'daily_plan' array. Each object in 'daily_plan' should have 'day', 'title', 'activities' (an array of strings), and 'food_suggestions' (an array of strings).";
+const AI_PROMPT = `You are a trip planner. Return ONLY valid JSON (no prose, no markdown, no backticks).
+Schema:
+{
+  "trip": {
+    "location": string,
+    "noOfDays": number,
+    "budget": string,
+    "traveler": string,
+    "bestTimeToVisit": string,
+    "hotels": [
+      {
+        "hotelName": string,
+        "hotelAddress": string,
+        "price": number,
+        "rating": number,
+        "descriptions": string,
+        "hotelImageUrl": string
+      }
+    ],
+    "daily_plan": [
+      {
+        "day": number,
+        "title": string,
+        "activities": [
+          string | {
+            "name": string,
+            "details": string,
+            "rating": number,
+            "imageUrl": string
+          }
+        ]
+      }
+    ],
+    "disclaimer": string
+  }
+}
+Fill with realistic values.
+For the trip to {location} for {noOfDays} days for {traveler} with a {budget} budget.`;
 
-const URL =
-  "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=AIzaSyCF2cG4mkMYbKCYg_04GaxEQDXk1sPhYg4";
+// Hardcoded Gemini API key as requested
+const API_KEY = "AIzaSyCjcLQoEQzqzGEO6QTUFw42wUnfyJvTOiU";
+const URL = `https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=${API_KEY}`;
 
 const SelectionCard = ({ item, isSelected, onClick }) => (
   <div
@@ -96,8 +111,6 @@ const SelectionCard = ({ item, isSelected, onClick }) => (
   </div>
 );
 
-// --- Main Page Component ---
-
 const Page = () => {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -108,11 +121,13 @@ const Page = () => {
     travellers: "",
   });
 
+
+  useEffect(() => {
+    console.log("Form data updated:", formData);
+  }, [formData]);
+
   const handleFormInputChange = (name, value) => {
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleGenerateTrip = async () => {
@@ -135,7 +150,7 @@ const Page = () => {
       .replace("{budget}", formData.budget);
 
     const payload = {
-      contents: [{ parts: [{ text: FINAL_PROMPT }] }],
+      contents: [{ parts: [{ text: FINAL_PROMPT }] }]
     };
 
     try {
@@ -146,26 +161,90 @@ const Page = () => {
       });
 
       if (!response.ok) {
-        throw new Error(`API error: ${response.statusText}`);
+        let errorMsg = `API error: ${response.status} ${response.statusText}`;
+        try {
+          const contentType = response.headers.get('content-type');
+          if (contentType && contentType.includes('application/json')) {
+            const errorJson = await response.json();
+            errorMsg += `\n${JSON.stringify(errorJson, null, 2)}`;
+          } else {
+            const errorText = await response.text();
+            errorMsg += `\n${errorText}`;
+          }
+        } catch (e) {
+          errorMsg += '\n[Could not parse error body]';
+        }
+        console.error(errorMsg);
+        toast.error(errorMsg);
+        setLoading(false);
+        return;
       }
 
       response = await response.json();
       const tripData = response?.candidates?.[0]?.content?.parts?.[0]?.text;
 
-      if (!tripData) {
-        throw new Error("No trip plan was returned from the AI.");
+      if (!tripData) throw new Error("No trip plan was returned from the AI.");
+
+      // Clean potential markdown fences and parse JSON safely
+      let clean = tripData.trim();
+      if (clean.startsWith("```")) {
+        clean = clean.replace(/^```(?:json)?/, "").replace(/```$/, "").trim();
       }
 
-      // Clean the JSON response by removing markdown backticks
-      let cleanData = tripData.trim();
-      if (cleanData.startsWith("```json")) {
-        cleanData = cleanData
-          .replace(/^```json/, "")
-          .replace(/```$/, "")
-          .trim();
+      // Fallback: slice to first/last brace if extra text present
+      const firstBrace = clean.indexOf("{");
+      const lastBrace = clean.lastIndexOf("}");
+      if (firstBrace === -1 || lastBrace === -1) {
+        console.error("AI response did not contain JSON braces:", clean);
+        toast.error("AI returned non-JSON content. Please try again.");
+        setLoading(false);
+        return;
+      }
+      clean = clean.slice(firstBrace, lastBrace + 1);
+
+      let parsed;
+      try {
+        parsed = JSON.parse(clean);
+      } catch (e) {
+        console.error("Failed to parse AI trip JSON:", e, clean);
+        toast.error("AI returned invalid trip data. Please try again.");
+        setLoading(false);
+        return;
       }
 
-      localStorage.setItem("tripPlan", cleanData);
+      // Unwrap if API returned { trip: { ... } }
+      const base = parsed?.trip ? parsed.trip : parsed;
+
+      // Transform into structure expected by travel plan page
+      const suggestedItinerary = Array.isArray(base?.suggestedItinerary)
+        ? base.suggestedItinerary
+        : Array.isArray(base?.daily_plan)
+          ? base.daily_plan.map((d, idx) => ({
+              theme: d.title || `Day ${d.day || idx + 1}`,
+              plan: Array.isArray(d.activities)
+                ? d.activities.map((act) => ({
+                    placeName: typeof act === "string" ? act : act?.name || "Activity",
+                    placeDetails: typeof act === "string" ? "" : act?.details || "",
+                    rating: typeof act === "object" && act?.rating ? act.rating : "",
+                    timeTravelEachLocation: "",
+                    placeImageUrl: typeof act === "object" ? act?.imageUrl : undefined,
+                  }))
+                : [],
+            }))
+          : [];
+
+      const targetPlan = {
+        location: base.location || base.destination || formData.place,
+        duration: base.noOfDays || base.duration || formData.days,
+        budget: base.budget || formData.budget,
+        travelers: base.traveler || base.travelers || formData.travellers,
+        bestTimeToVisit: base.bestTimeToVisit || "",
+        hotels: Array.isArray(base.hotels) ? base.hotels : [],
+        suggestedItinerary,
+        disclaimer: base.disclaimer || "This is an AI-generated plan. Please verify details before booking.",
+      };
+
+      localStorage.setItem("tripPlan", JSON.stringify(targetPlan));
       router.push("/travel-plan");
     } catch (err) {
       console.error("Error generating trip:", err);
@@ -280,9 +359,7 @@ const Page = () => {
                   key={item.id}
                   item={item}
                   isSelected={formData.travellers === item.title}
-                  onClick={() =>
-                    handleFormInputChange("travellers", item.title)
-                  }
+                  onClick={() => handleFormInputChange("travellers", item.title)}
                 />
               ))}
             </div>
