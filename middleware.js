@@ -2,6 +2,9 @@ import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
 const isProtectedRoute = createRouteMatcher([
+  "/create-trip(.*)",
+  "/travel-plan(.*)",
+  "/trips(.*)",
   "/onboarding(.*)",
   "/organsation(.*)",
   "/project(.*)",
@@ -9,6 +12,11 @@ const isProtectedRoute = createRouteMatcher([
 ]);
 
 export default clerkMiddleware(async (auth, req) => {
+  // Don't protect API routes - let them handle their own authentication
+  if (req.nextUrl.pathname.startsWith('/api/')) {
+    return NextResponse.next();
+  }
+
   const { userId } = await auth();
 
   if (!userId && isProtectedRoute(req)) {

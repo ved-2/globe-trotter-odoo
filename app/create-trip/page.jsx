@@ -6,6 +6,7 @@ import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useUser } from "@clerk/nextjs";
 
 const SelectBudgetOptions = [
   {
@@ -113,6 +114,7 @@ const SelectionCard = ({ item, isSelected, onClick }) => (
 
 const Page = () => {
   const router = useRouter();
+  const { user, isLoaded, isSignedIn } = useUser();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     place: "",
@@ -121,6 +123,12 @@ const Page = () => {
     travellers: "",
   });
 
+  // Redirect to sign-in if not authenticated
+  useEffect(() => {
+    if (isLoaded && !isSignedIn) {
+      router.push('/sign-in');
+    }
+  }, [isLoaded, isSignedIn, router]);
 
   useEffect(() => {
     console.log("Form data updated:", formData);
@@ -202,14 +210,42 @@ const Page = () => {
       }
       clean = clean.slice(firstBrace, lastBrace + 1);
 
+      // Attempt strict parse, then try a few safe repairs if needed
+      const normalizeJsonText = (text) => {
+        return text
+          .replace(/[\u2018\u2019]/g, "'")
+          .replace(/[\u201C\u201D]/g, '"')
+          .replace(/`/g, '');
+      };
+
+      const repairJsonText = (text) => {
+        let t = text;
+        // Insert commas between adjacent objects/arrays
+        t = t.replace(/}\s*{/g, '},{');
+        t = t.replace(/]\s*\[/g, '],[');
+        // Remove trailing commas before closing braces/brackets
+        t = t.replace(/,(\s*[}\]])/g, '$1');
+        return t;
+      };
+
       let parsed;
       try {
         parsed = JSON.parse(clean);
-      } catch (e) {
-        console.error("Failed to parse AI trip JSON:", e, clean);
-        toast.error("AI returned invalid trip data. Please try again.");
-        setLoading(false);
-        return;
+      } catch (e1) {
+        try {
+          const normalized = normalizeJsonText(clean);
+          parsed = JSON.parse(normalized);
+        } catch (e2) {
+          try {
+            const repaired = repairJsonText(normalizeJsonText(clean));
+            parsed = JSON.parse(repaired);
+          } catch (e3) {
+            console.error("Failed to parse AI trip JSON after repairs:", e3, clean);
+            toast.error("AI returned malformed JSON. Please try again.");
+            setLoading(false);
+            return;
+          }
+        }
       }
 
       // Unwrap if API returned { trip: { ... } }
@@ -220,32 +256,137 @@ const Page = () => {
         ? base.suggestedItinerary
         : Array.isArray(base?.daily_plan)
           ? base.daily_plan.map((d, idx) => ({
-              theme: d.title || `Day ${d.day || idx + 1}`,
-              plan: Array.isArray(d.activities)
-                ? d.activities.map((act) => ({
-                    placeName: typeof act === "string" ? act : act?.name || "Activity",
-                    placeDetails: typeof act === "string" ? "" : act?.details || "",
-                    rating: typeof act === "object" && act?.rating ? act.rating : "",
-                    timeTravelEachLocation: "",
-                    placeImageUrl: typeof act === "object" ? act?.imageUrl : undefined,
-                  }))
+              dayNumber: idx + 1,
+              date: new Date(Date.now() + idx * 24 * 60 * 60 * 1000), // Future dates
+              theme: ((d.title || `Day ${d.day || idx + 1}`)?.toString() || '').slice(0, 100),
+              activities: Array.isArray(d.activities)
+                ? d.activities.map((act) => {
+                    const rawTitle = typeof act === 'string' ? act : (act?.name || 'Activity');
+                    const safeTitle = (rawTitle || 'Activity').toString().trim().slice(0, 200);
+                    const locName = typeof act === 'string' ? act : (act?.name || 'Location');
+                    return ({
+                      title: safeTitle,
+                      description: typeof act === 'string' ? act : (act?.details || 'Activity details'),
+                      date: new Date(Date.now() + idx * 24 * 60 * 60 * 1000),
+                      time: {
+                        startTime: '09:00',
+                        endTime: '17:00'
+                      },
+                      location: {
+                        name: locName,
+                        address: ''
+                      },
+                      cost: {
+                        amount: 0,
+                        currency: 'USD',
+                        category: 'other'
+                      },
+                      rating: typeof act === 'object' && act?.rating ? act.rating : 0,
+                      isCompleted: false,
+                      priority: 'medium'
+                    });
+                  })
                 : [],
+              summary: "",
+              totalCost: {
+                amount: 0,
+                currency: "USD"
+              }
             }))
           : [];
 
-      const targetPlan = {
-        location: base.location || base.destination || formData.place,
-        duration: base.noOfDays || base.duration || formData.days,
-        budget: base.budget || formData.budget,
-        travelers: base.traveler || base.travelers || formData.travellers,
+      // Create proper trip structure for MongoDB
+      const tripDataForMongo = {
+        // Required fields
+        title: `${formData.place} Trip - ${formData.days} Days`,
+        destination: {
+          name: base.location || base.destination || formData.place,
+          country: "Unknown", // You might want to get this from a location API
+          coordinates: {
+            latitude: 0,
+            longitude: 0
+          }
+        },
+        startDate: new Date(),
+        endDate: new Date(Date.now() + (formData.days - 1) * 24 * 60 * 60 * 1000),
+        numberOfDays: parseInt(formData.days),
+        budget: formData.budget,
+        travelGroup: formData.travellers,
+        
+        // Optional fields
         bestTimeToVisit: base.bestTimeToVisit || "",
-        hotels: Array.isArray(base.hotels) ? base.hotels : [],
-        suggestedItinerary,
-        disclaimer: base.disclaimer || "This is an AI-generated plan. Please verify details before booking.",
+        itinerary: suggestedItinerary,
+        hotels: Array.isArray(base.hotels) ? base.hotels.map(hotel => ({
+          name: hotel.hotelName || hotel.name || "Hotel",
+          address: hotel.hotelAddress || hotel.address || "Address not specified",
+          price: {
+            amount: hotel.price || 0,
+            currency: "USD",
+            perNight: true
+          },
+          rating: hotel.rating || 0,
+          description: hotel.descriptions || hotel.description || "",
+          imageUrl: hotel.hotelImageUrl || hotel.imageUrl || "",
+          amenities: [],
+          bookingReference: ""
+        })) : [],
+        
+        // AI metadata
+        aiPrompt: FINAL_PROMPT,
+        
+        // Set default values for required fields
+        status: "planning",
+        isPublic: false,
+        notes: "",
+        tags: []
       };
 
-      localStorage.setItem("tripPlan", JSON.stringify(targetPlan));
-      router.push("/travel-plan");
+      // Save to MongoDB instead of localStorage
+      try {
+        const response = await fetch('/api/trips', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(tripDataForMongo)
+        });
+
+        if (!response.ok) {
+          let errorMessage = `Failed to save trip (${response.status})`;
+          
+          try {
+            const contentType = response.headers.get('content-type');
+            if (contentType && contentType.includes('application/json')) {
+              const errorData = await response.json();
+              errorMessage = errorData.error || errorData.message || errorMessage;
+              if (errorData.validationErrors) {
+                errorMessage += `: ${errorData.validationErrors.map(e => e.message).join(', ')}`;
+              }
+            } else {
+              const errorText = await response.text();
+              if (errorText.startsWith('<!DOCTYPE')) {
+                errorMessage = 'Server error - please check if MongoDB is running and restart the server';
+              } else {
+                errorMessage = errorText || errorMessage;
+              }
+            }
+          } catch (parseError) {
+            console.error('Error parsing error response:', parseError);
+            errorMessage = 'Failed to parse server error response';
+          }
+          
+          throw new Error(errorMessage);
+        }
+
+        const { trip } = await response.json();
+        console.log('Trip saved to MongoDB:', trip);
+        
+        // Navigate to travel plan with trip ID
+        router.push(`/travel-plan/${trip._id}`);
+      } catch (saveError) {
+        console.error('Error saving trip to MongoDB:', saveError);
+        toast.error(`Failed to save trip: ${saveError.message}`);
+        setLoading(false);
+        return;
+      }
     } catch (err) {
       console.error("Error generating trip:", err);
       toast.error("Something went wrong. Please try again later.");
@@ -253,6 +394,15 @@ const Page = () => {
       setLoading(false);
     }
   };
+
+  // Show loading while checking authentication
+  if (!isLoaded || !isSignedIn) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-amber-500" />
+      </div>
+    );
+  }
 
   return (
     <div className="bg-black min-h-screen text-gray-200 relative overflow-hidden">

@@ -5,6 +5,7 @@ import {
   Map, Calendar, Users, ChevronRight, ArrowRight, Sparkles, Star, 
   Shield, Zap, Heart 
 } from "lucide-react";
+import Link from "next/link";
 
 const faqs = [
   {
@@ -219,7 +220,7 @@ export default function Home() {
       {/* ================= HERO SECTION ================= */}
       <section className="container mx-auto py-20 text-center relative z-10 px-5">
         <div className="relative">
-          {/* Enhanced hero glow effect */}
+
           <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-amber-500/20 rounded-full filter blur-3xl animate-pulse" />
           <div className="absolute top-1/2 left-1/3 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-orange-500/15 rounded-full filter blur-2xl animate-pulse" style={{animationDelay: '1s'}} />
           
@@ -245,10 +246,12 @@ export default function Home() {
           </p>
           
           <div className="flex flex-col sm:flex-row justify-center gap-4 items-center">
+            <Link href="/create-trip">
             <Button size="lg" className="group shadow-2xl shadow-amber-500/25">
               Start Planning Free
               <ChevronRight size={18} className="ml-2 group-hover:translate-x-1 transition-transform duration-300" />
             </Button>
+    </Link>
             <Button size="lg" variant="outline">
               Watch Demo
             </Button>
@@ -256,10 +259,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ================= STATS SECTION ================= */}
-      <StatsSection />
 
-      {/* ================= FEATURES SECTION ================= */}
+      <StatsSection />
       <section id="features" className="py-20 px-5 relative z-10">
         <EnhancedFeatures />
       </section>
