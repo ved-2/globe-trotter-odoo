@@ -1,5 +1,15 @@
 // components/Heatmap.js
-import { MapContainer, TileLayer } from 'react-leaflet';
+
+import dynamic from "next/dynamic";
+
+const MapContainer = dynamic(
+  () => import("react-leaflet").then(mod => mod.MapContainer),
+  { ssr: false }
+);
+const TileLayer = dynamic(
+  () => import("react-leaflet").then(mod => mod.TileLayer),
+  { ssr: false }
+);
 // import HeatmapLayer from 'react-leaflet-heatmap-layer-v3';
 
 

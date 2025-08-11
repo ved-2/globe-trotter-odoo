@@ -11,9 +11,7 @@ import {
   DollarSign, 
   Plus, 
   Search, 
-  Filter,
   Heart,
-  Bookmark,
   Globe,
   TrendingUp,
   Clock,
@@ -23,10 +21,17 @@ import {
   Eye
 } from "lucide-react";
 import { CopilotPopup } from "@copilotkit/react-ui";
-import { useCopilotReadable, useCopilotAction, CopilotKit } from "@copilotkit/react-core";
+import { useCopilotReadable, useCopilotAction } from "@copilotkit/react-core";
 import Link from "next/link";
 import Heatmap from "@/components/Heatmap";
-import dynamic from "next/dynamic";
+
+// Helper for safe date formatting to avoid hydration mismatch
+function formatDateYYYYMMDD(dateString) {
+  // Only format if dateString is valid
+  if (!dateString) return "";
+  // Use substring to avoid locale differences
+  return dateString.substring(0, 10);
+}
 
 const Dashboard = () => {
   const router = useRouter();
@@ -252,8 +257,6 @@ const Dashboard = () => {
         return { success: false, error: "Title and destination are required" };
       }
 
-    
-      
       const tripData = {
         title,
         destination: { name: destination },
@@ -282,34 +285,10 @@ const Dashboard = () => {
     );
   }
 
-  const [locations, setLocations] = useState([]);
-
-  // Dynamically import the Heatmap component with SSR turned off
-// In app/dashboard/page.jsx
-
-const Heatmap = dynamic(
-  () => import('@/components/Heatmap'),
-  { 
-    ssr: false,
-    // Optional: show a loading skeleton while the map loads
-    loading: () => <p>Loading map...</p> 
-  }
-); 
-
-  useEffect(() => {
-    // Fetch data from our API route
-    const fetchData = async () => {
-      const response = await fetch('/api/locations');
-      const data = await response.json();
-      setLocations(data);
-    };
-
-    fetchData();
-  }, []);
-
+  // Remove all use of Date.toLocaleDateString() in render to avoid hydration mismatch
+  // Instead, use a safe date formatter (formatDateYYYYMMDD)
 
   return (
-
     <div className="min-h-screen bg-black text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
@@ -542,7 +521,9 @@ const Heatmap = dynamic(
                               {item.priority === 'high' ? '🔥 High' :
                                item.priority === 'medium' ? '⭐ Medium' : '🌱 Low'}
                             </span>
-                            <span>{new Date(item.addedDate).toLocaleDateString()}</span>
+                            <span>
+                              {formatDateYYYYMMDD(item.addedDate)}
+                            </span>
                           </div>
                           {item.notes && (
                             <p className="text-sm text-gray-300 mt-2 italic">{item.notes}</p>
