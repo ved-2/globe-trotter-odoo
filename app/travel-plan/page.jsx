@@ -4,6 +4,7 @@ import { CopilotPopup } from "@copilotkit/react-ui";
 import React, { useEffect, useState } from "react";
 import "@copilotkit/react-ui/styles.css";
 import { useCopilotReadable } from "@copilotkit/react-core";
+import ViewTripPDF from "@/app/api/trips/[id]/pdf";
 
 const TravelPlan = () => {
   const [plan, setPlan] = useState(null);
@@ -87,6 +88,11 @@ useCopilotReadable({
           ))}
         </div>
       </div>
+      {/* 📄 View PDF Button */}
+<div className="mt-4">
+  <ViewTripPDF tripId={plan._id} /> 
+  {/* Make sure to import ViewTripPDF at the top */}
+</div>
 
       {/* Itinerary */}
       <div>
