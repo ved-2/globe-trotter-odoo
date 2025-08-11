@@ -23,7 +23,7 @@ import {
   Eye
 } from "lucide-react";
 import { CopilotPopup } from "@copilotkit/react-ui";
-import { useCopilotReadable, useCopilotAction } from "@copilotkit/react-core";
+import { useCopilotReadable, useCopilotAction, CopilotKit } from "@copilotkit/react-core";
 
 const Dashboard = () => {
   const router = useRouter();
