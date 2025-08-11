@@ -22,12 +22,11 @@ const formatDuration = (minutes) => {
   return result.trim();
 };
 
-
 const TimeDisplay = ({ time, timeTravel }) => {
   if (!time && !timeTravel) {
     return (
-      <span className="flex items-center text-gray-500">
-        <Clock size={14} className="mr-1.5" />
+      <span className="flex items-center text-gray-400">
+        <Clock size={14} className="mr-1.5 text-amber-400" />
         Time TBD
       </span>
     );
@@ -36,8 +35,8 @@ const TimeDisplay = ({ time, timeTravel }) => {
   // Handle travel time first if it exists
   if (timeTravel) {
     return (
-        <span className="flex items-center text-purple-600">
-            <Hourglass size={14} className="mr-1.5" />
+        <span className="flex items-center text-transparent bg-gradient-to-r from-amber-400 to-amber-600 bg-clip-text">
+            <Hourglass size={14} className="mr-1.5 text-amber-500" />
             {timeTravel}
         </span>
     );
@@ -66,13 +65,13 @@ const TimeDisplay = ({ time, timeTravel }) => {
   
   return (
     <div className="flex items-center space-x-4">
-        <span className="flex items-center text-gray-700 font-medium">
-            <Clock size={14} className="mr-1.5 text-gray-500" />
+        <span className="flex items-center text-amber-200 font-medium">
+            <Clock size={14} className="mr-1.5 text-amber-400" />
             {timeString}
         </span>
         {durationString && (
-            <span className="flex items-center text-sm text-gray-500">
-                <Hourglass size={12} className="mr-1" />
+            <span className="flex items-center text-sm text-transparent bg-gradient-to-r from-amber-300 to-amber-500 bg-clip-text">
+                <Hourglass size={12} className="mr-1 text-amber-400" />
                 {durationString}
             </span>
         )}

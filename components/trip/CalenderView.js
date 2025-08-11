@@ -37,7 +37,11 @@ const CalendarView = ({ tripDays }) => {
           color: 'white',
           fontWeight: 'bold',
         },
-        day_today: { color: '#3b82f6' }
+        day_today: { color: '#3b82f6' },
+        wrapper: {
+          backgroundColor: 'black',
+          color: 'amber',
+        },
       }}
     />
   );

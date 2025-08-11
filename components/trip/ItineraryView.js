@@ -48,10 +48,10 @@ const ItineraryView = ({ itinerary, onItineraryChange }) => {
 
   if (!itinerary || itinerary.length === 0) {
     return (
-      <div className="bg-white rounded-2xl shadow-lg p-8 text-center">
-        <div className="text-gray-400 text-6xl mb-4">📋</div>
-        <h3 className="text-xl font-semibold text-gray-900 mb-2">No Itinerary Yet</h3>
-        <p className="text-gray-600">Use the AI assistant on the right to build your travel plan!</p>
+      <div className="bg-gradient-to-br from-gray-900 to-black rounded-2xl shadow-lg shadow-amber-500/20 border border-amber-500/20 p-8 text-center">
+        <div className="text-amber-400 text-6xl mb-4">📋</div>
+        <h3 className="text-xl font-semibold text-transparent bg-gradient-to-r from-amber-300 to-amber-500 bg-clip-text mb-2">No Itinerary Yet</h3>
+        <p className="text-gray-300">Use the AI assistant on the right to build your travel plan!</p>
       </div>
     );
   }
