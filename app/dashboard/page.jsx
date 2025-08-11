@@ -2,6 +2,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
+import "@copilotkit/react-ui/styles.css";
 import { 
   Loader2, 
   MapPin, 
@@ -192,8 +193,6 @@ const Dashboard = () => {
     }));
   }, [bucketList.length]);
 
-
-
   // Redirect if not authenticated
   useEffect(() => {
     if (isLoaded && !isSignedIn) {
@@ -259,83 +258,87 @@ const Dashboard = () => {
 
   if (!isLoaded || !isSignedIn) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="flex items-center space-x-3">
+          <Loader2 className="h-8 w-8 animate-spin text-amber-400" />
+          <p className="text-amber-100 text-lg">Loading your dashboard...</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+
+    <div className="min-h-screen bg-black text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            🧳 Welcome back, {user?.firstName || 'Traveler'}!
+        <div className="mb-8 mt-25">
+          <h1 className="text-5xl font-bold bg-gradient-to-r from-amber-400 to-amber-200 bg-clip-text text-transparent mb-3">
+            ✈️ Welcome back, {user?.firstName || 'Traveler'}!
           </h1>
-          <p className="text-gray-600 text-lg">
-            Manage your trips, explore new destinations, and plan your next adventure
+          <p className="text-amber-100/80 text-xl font-light">
+            Curate your journeys, discover new horizons, and craft unforgettable adventures
           </p>
         </div>
 
         {/* Statistics Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
-          <div className="bg-white rounded-xl p-6 shadow-sm">
+          <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-6 border border-amber-500/20 hover:border-amber-400/40 transition-all duration-300 backdrop-blur-sm">
             <div className="flex items-center">
-              <div className="p-2 bg-blue-100 rounded-lg">
-                <Globe className="h-6 w-6 text-blue-600" />
+              <div className="p-3 bg-amber-500/10 rounded-xl border border-amber-500/20">
+                <Globe className="h-6 w-6 text-amber-400" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Total Trips</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.totalTrips}</p>
+                <p className="text-sm font-medium text-amber-200/70">Total Journeys</p>
+                <p className="text-3xl font-bold text-amber-100">{stats.totalTrips}</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-xl p-6 shadow-sm">
+          <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-6 border border-emerald-500/20 hover:border-emerald-400/40 transition-all duration-300">
             <div className="flex items-center">
-              <div className="p-2 bg-green-100 rounded-lg">
-                <Calendar className="h-6 w-6 text-green-600" />
+              <div className="p-3 bg-emerald-500/10 rounded-xl border border-emerald-500/20">
+                <Calendar className="h-6 w-6 text-emerald-400" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Completed</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.completedTrips}</p>
+                <p className="text-sm font-medium text-emerald-200/70">Completed</p>
+                <p className="text-3xl font-bold text-emerald-100">{stats.completedTrips}</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-xl p-6 shadow-sm">
+          <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-6 border border-purple-500/20 hover:border-purple-400/40 transition-all duration-300">
             <div className="flex items-center">
-              <div className="p-2 bg-purple-100 rounded-lg">
-                <Clock className="h-6 w-6 text-purple-600" />
+              <div className="p-3 bg-purple-500/10 rounded-xl border border-purple-500/20">
+                <Clock className="h-6 w-6 text-purple-400" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Upcoming</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.upcomingTrips}</p>
+                <p className="text-sm font-medium text-purple-200/70">Upcoming</p>
+                <p className="text-3xl font-bold text-purple-100">{stats.upcomingTrips}</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-xl p-6 shadow-sm">
+          <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-6 border border-blue-500/20 hover:border-blue-400/40 transition-all duration-300">
             <div className="flex items-center">
-              <div className="p-2 bg-yellow-100 rounded-lg">
-                <MapPin className="h-6 w-6 text-yellow-600" />
+              <div className="p-3 bg-blue-500/10 rounded-xl border border-blue-500/20">
+                <MapPin className="h-6 w-6 text-blue-400" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Destinations</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.totalDestinations}</p>
+                <p className="text-sm font-medium text-blue-200/70">Destinations</p>
+                <p className="text-3xl font-bold text-blue-100">{stats.totalDestinations}</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-xl p-6 shadow-sm">
+          <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-6 border border-red-500/20 hover:border-red-400/40 transition-all duration-300">
             <div className="flex items-center">
-              <div className="p-2 bg-red-100 rounded-lg">
-                <Heart className="h-6 w-6 text-red-600" />
+              <div className="p-3 bg-red-500/10 rounded-xl border border-red-500/20">
+                <Heart className="h-6 w-6 text-red-400" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Bucket List</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.bucketListCount}</p>
+                <p className="text-sm font-medium text-red-200/70">Dream List</p>
+                <p className="text-3xl font-bold text-red-100">{stats.bucketListCount}</p>
               </div>
             </div>
           </div>
@@ -344,99 +347,100 @@ const Dashboard = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Travel Plans Section */}
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-2xl shadow-lg p-6">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-gray-900">Your Travel Plans</h2>
+            <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-3xl border border-amber-500/20 p-8 backdrop-blur-sm">
+              <div className="flex items-center justify-between mb-8">
+                <h2 className="text-3xl font-bold bg-gradient-to-r from-amber-400 to-amber-200 bg-clip-text text-transparent">Your Travel Odyssey</h2>
                 <button
                   onClick={() => setShowAddTrip(true)}
-                  className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                  className="flex items-center px-6 py-3 bg-gradient-to-r from-amber-500 to-amber-400 text-black font-medium rounded-xl hover:from-amber-400 hover:to-amber-300 transition-all duration-300 shadow-lg shadow-amber-500/25"
                 >
-                  <Plus className="h-4 w-4 mr-2" />
-                  New Trip
+                  <Plus className="h-5 w-5 mr-2" />
+                  New Journey
                 </button>
               </div>
 
               {/* Search and Filter */}
-              <div className="flex flex-col sm:flex-row gap-4 mb-6">
+              <div className="flex flex-col sm:flex-row gap-4 mb-8">
                 <div className="relative flex-1">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-amber-400/60" />
                   <input
                     type="text"
-                    placeholder="Search trips..."
+                    placeholder="Search your adventures..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full pl-12 pr-4 py-4 bg-gray-800 border border-gray-700 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-300"
                   />
                 </div>
                 <select
                   value={filterStatus}
                   onChange={(e) => setFilterStatus(e.target.value)}
-                  className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="px-6 py-4 bg-gray-800 border border-gray-700 rounded-xl text-white focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-300"
                 >
-                  <option value="all">All Status</option>
+                  <option value="all">All Journeys</option>
                   <option value="planning">Planning</option>
-                  <option value="booked">Booked</option>
+                  <option value="booked">Confirmed</option>
                   <option value="completed">Completed</option>
                 </select>
               </div>
 
               {/* Trips List */}
               {loading ? (
-                <div className="flex items-center justify-center py-8">
-                  <Loader2 className="h-8 w-8 animate-spin text-blue-600 mr-3" />
-                  <p className="text-gray-600">Loading your trips...</p>
+                <div className="flex items-center justify-center py-12">
+                  <Loader2 className="h-8 w-8 animate-spin text-amber-400 mr-3" />
+                  <p className="text-amber-100 text-lg">Loading your adventures...</p>
                 </div>
               ) : filteredTrips.length > 0 ? (
                 <div className="space-y-4">
                   {filteredTrips.map((trip) => (
-                    <div key={trip._id || trip.id} className="border rounded-xl p-4 hover:shadow-md transition-shadow">
+                    <div key={trip._id || trip.id} className="bg-gradient-to-r from-gray-800 to-gray-700 border border-gray-600/50 rounded-2xl p-6 hover:border-amber-500/40 transition-all duration-300 hover:shadow-lg hover:shadow-amber-500/10">
                       <div className="flex items-center justify-between">
                         <div className="flex-1">
-                          <h3 className="text-lg font-semibold text-gray-900 mb-1">
-                            {trip.title || `${trip.destination?.name || trip.location} Trip`}
+                          <h3 className="text-xl font-semibold text-amber-100 mb-2">
+                            {trip.title || `${trip.destination?.name || trip.location} Expedition`}
                           </h3>
-                          <div className="flex items-center space-x-4 text-sm text-gray-600">
+                          <div className="flex items-center space-x-6 text-sm text-gray-300">
                             <span className="flex items-center">
-                              <MapPin className="h-4 w-4 mr-1" />
+                              <MapPin className="h-4 w-4 mr-2 text-amber-400" />
                               {trip.destination?.name || trip.location}
                             </span>
                             <span className="flex items-center">
-                              <Calendar className="h-4 w-4 mr-1" />
-                              {trip.numberOfDays || trip.duration || 'N/A'}
+                              <Calendar className="h-4 w-4 mr-2 text-blue-400" />
+                              {trip.numberOfDays || trip.duration || 'TBD'} days
                             </span>
                             <span className="flex items-center">
-                              <Users className="h-4 w-4 mr-1" />
+                              <Users className="h-4 w-4 mr-2 text-emerald-400" />
                               {trip.travelGroup || 'Solo'}
                             </span>
                             {trip.budget && (
                               <span className="flex items-center">
-                                <DollarSign className="h-4 w-4 mr-1" />
+                                <DollarSign className="h-4 w-4 mr-2 text-green-400" />
                                 {trip.budget}
                               </span>
                             )}
                           </div>
                         </div>
-                        <div className="flex items-center space-x-2">
-                          <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                            trip.status === 'completed' ? 'bg-green-100 text-green-800' :
-                            trip.status === 'booked' ? 'bg-blue-100 text-blue-800' :
-                            'bg-yellow-100 text-yellow-800'
+                        <div className="flex items-center space-x-3">
+                          <span className={`px-4 py-2 rounded-full text-xs font-medium border ${
+                            trip.status === 'completed' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30' :
+                            trip.status === 'booked' ? 'bg-blue-500/10 text-blue-400 border-blue-500/30' :
+                            'bg-amber-500/10 text-amber-400 border-amber-500/30'
                           }`}>
-                            {trip.status || 'planning'}
+                            {trip.status === 'completed' ? '✓ Completed' :
+                             trip.status === 'booked' ? '🎯 Confirmed' : '📝 Planning'}
                           </span>
                           <button
                             onClick={() => router.push(`/travel-plan/${trip._id || trip.id}`)}
-                            className="p-2 text-gray-400 hover:text-blue-600 transition-colors"
-                            title="View Trip"
+                            className="p-2 text-gray-400 hover:text-amber-400 transition-colors"
+                            title="View Journey"
                           >
-                            <Eye className="h-4 w-4" />
+                            <Eye className="h-5 w-5" />
                           </button>
                           <button
                             onClick={() => router.push(`/create-trip?edit=${trip._id || trip.id}`)}
-                            className="p-2 text-gray-400 hover:text-green-600 transition-colors"
-                            title="Edit Trip"
+                            className="p-2 text-gray-400 hover:text-emerald-400 transition-colors"
+                            title="Edit Journey"
                           >
-                            <Edit className="h-4 w-4" />
+                            <Edit className="h-5 w-5" />
                           </button>
                         </div>
                       </div>
@@ -444,20 +448,20 @@ const Dashboard = () => {
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-8">
-                  <div className="text-gray-400 text-4xl mb-4">🧳</div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">No trips found</h3>
-                  <p className="text-gray-600 mb-4">
+                <div className="text-center py-16">
+                  <div className="text-amber-400 text-6xl mb-6">🧳</div>
+                  <h3 className="text-2xl font-semibold text-amber-100 mb-3">No journeys found</h3>
+                  <p className="text-gray-300 mb-8 text-lg">
                     {searchTerm || filterStatus !== 'all' 
                       ? 'Try adjusting your search or filters'
-                      : 'Start planning your first adventure!'
+                      : 'Begin crafting your first extraordinary adventure!'
                     }
                   </p>
                   <button
                     onClick={() => setShowAddTrip(true)}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                    className="px-8 py-4 bg-gradient-to-r from-amber-500 to-amber-400 text-black font-medium rounded-xl hover:from-amber-400 hover:to-amber-300 transition-all duration-300 shadow-lg shadow-amber-500/25"
                   >
-                    Create Your First Trip
+                    Create Your First Journey
                   </button>
                 </div>
               )}
@@ -466,12 +470,12 @@ const Dashboard = () => {
 
           {/* Bucket List Section */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-2xl shadow-lg p-6">
+            <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-3xl border border-red-500/20 p-6 mb-8">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-gray-900">Bucket List</h2>
+                <h2 className="text-2xl font-bold bg-gradient-to-r from-red-400 to-red-200 bg-clip-text text-transparent">Dream Destinations</h2>
                 <button
                   onClick={() => setShowAddBucket(true)}
-                  className="flex items-center px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                  className="flex items-center px-4 py-2 bg-gradient-to-r from-red-500 to-red-400 text-white rounded-xl hover:from-red-400 hover:to-red-300 transition-all duration-300 shadow-lg shadow-red-500/25"
                 >
                   <Plus className="h-4 w-4 mr-1" />
                   Add
@@ -479,31 +483,32 @@ const Dashboard = () => {
               </div>
 
               {bucketList.length > 0 ? (
-                                 <div className="space-y-3">
-                   {bucketList.map((item) => (
-                     <div key={item._id || item.id} className="border rounded-lg p-3 hover:shadow-sm transition-shadow">
+                <div className="space-y-4">
+                  {bucketList.map((item) => (
+                    <div key={item._id || item.id} className="bg-gradient-to-r from-gray-800 to-gray-700 border border-gray-600/50 rounded-xl p-4 hover:border-red-500/40 transition-all duration-300">
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
-                          <h4 className="font-medium text-gray-900 mb-1">{item.destination}</h4>
-                          <div className="flex items-center space-x-2 text-xs text-gray-500">
-                            <span className={`px-2 py-1 rounded-full ${
-                              item.priority === 'high' ? 'bg-red-100 text-red-800' :
-                              item.priority === 'medium' ? 'bg-yellow-100 text-yellow-800' :
-                              'bg-green-100 text-green-800'
+                          <h4 className="font-semibold text-red-100 mb-2">{item.destination}</h4>
+                          <div className="flex items-center space-x-3 text-xs text-gray-400 mb-2">
+                            <span className={`px-3 py-1 rounded-full border ${
+                              item.priority === 'high' ? 'bg-red-500/10 text-red-400 border-red-500/30' :
+                              item.priority === 'medium' ? 'bg-amber-500/10 text-amber-400 border-amber-500/30' :
+                              'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
                             }`}>
-                              {item.priority}
+                              {item.priority === 'high' ? '🔥 High' :
+                               item.priority === 'medium' ? '⭐ Medium' : '🌱 Low'}
                             </span>
                             <span>{new Date(item.addedDate).toLocaleDateString()}</span>
                           </div>
                           {item.notes && (
-                            <p className="text-sm text-gray-600 mt-2">{item.notes}</p>
+                            <p className="text-sm text-gray-300 mt-2 italic">{item.notes}</p>
                           )}
                         </div>
-                                                 <button
-                           onClick={() => removeFromBucketList(item._id || item.id)}
-                           className="p-1 text-gray-400 hover:text-red-600 transition-colors ml-2"
-                           title="Remove from bucket list"
-                         >
+                        <button
+                          onClick={() => removeFromBucketList(item._id || item.id)}
+                          className="p-2 text-gray-400 hover:text-red-400 transition-colors ml-2"
+                          title="Remove from dream list"
+                        >
                           <Trash2 className="h-4 w-4" />
                         </button>
                       </div>
@@ -511,69 +516,69 @@ const Dashboard = () => {
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-8">
-                  <div className="text-gray-400 text-4xl mb-4">💭</div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Empty bucket list</h3>
-                  <p className="text-gray-600 mb-4">Add destinations you dream of visiting</p>
+                <div className="text-center py-12">
+                  <div className="text-red-400 text-5xl mb-4">💭</div>
+                  <h3 className="text-lg font-semibold text-red-100 mb-2">Empty dream canvas</h3>
+                  <p className="text-gray-400 mb-6">Paint your wanderlust with destinations that ignite your soul</p>
                   <button
                     onClick={() => setShowAddBucket(true)}
-                    className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+                    className="px-6 py-3 bg-gradient-to-r from-red-500 to-red-400 text-white rounded-xl hover:from-red-400 hover:to-red-300 transition-all duration-300"
                   >
-                    Add Destination
+                    Add First Dream
                   </button>
                 </div>
               )}
             </div>
 
             {/* Quick Actions */}
-            <div className="bg-white rounded-2xl shadow-lg p-6 mt-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
-              <div className="space-y-3">
+            <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-3xl border border-amber-500/20 p-6 mb-8">
+              <h3 className="text-xl font-semibold text-amber-100 mb-6">Quick Actions</h3>
+              <div className="space-y-4">
                 <button
                   onClick={() => router.push('/create-trip')}
-                  className="w-full flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                  className="w-full flex items-center p-4 bg-gradient-to-r from-gray-800 to-gray-700 border border-gray-600/50 rounded-xl hover:border-amber-500/40 transition-all duration-300 group"
                 >
-                  <Plus className="h-4 w-4 mr-3 text-blue-600" />
+                  <Plus className="h-5 w-5 mr-4 text-amber-400 group-hover:text-amber-300" />
                   <span className="text-left">
-                    <div className="font-medium text-gray-900">Plan New Trip</div>
-                    <div className="text-sm text-gray-600">Create a detailed travel plan</div>
+                    <div className="font-medium text-amber-100 group-hover:text-white">Craft New Journey</div>
+                    <div className="text-sm text-gray-400">Design your perfect adventure</div>
                   </span>
                 </button>
                 
                 <button
                   onClick={() => router.push('/community')}
-                  className="w-full flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                  className="w-full flex items-center p-4 bg-gradient-to-r from-gray-800 to-gray-700 border border-gray-600/50 rounded-xl hover:border-emerald-500/40 transition-all duration-300 group"
                 >
-                  <Users className="h-4 w-4 mr-3 text-green-600" />
+                  <Users className="h-5 w-5 mr-4 text-emerald-400 group-hover:text-emerald-300" />
                   <span className="text-left">
-                    <div className="font-medium text-gray-900">Explore Community</div>
-                    <div className="text-sm text-gray-600">Discover travel inspiration</div>
+                    <div className="font-medium text-emerald-100 group-hover:text-white">Explore Community</div>
+                    <div className="text-sm text-gray-400">Discover inspiring journeys</div>
                   </span>
                 </button>
 
                 <button
                   onClick={() => setShowAddBucket(true)}
-                  className="w-full flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                  className="w-full flex items-center p-4 bg-gradient-to-r from-gray-800 to-gray-700 border border-gray-600/50 rounded-xl hover:border-red-500/40 transition-all duration-300 group"
                 >
-                  <Heart className="h-4 w-4 mr-3 text-red-600" />
+                  <Heart className="h-5 w-5 mr-4 text-red-400 group-hover:text-red-300" />
                   <span className="text-left">
-                    <div className="font-medium text-gray-900">Add to Bucket List</div>
-                    <div className="text-sm text-gray-600">Save dream destinations</div>
+                    <div className="font-medium text-red-100 group-hover:text-white">Add Dream Destination</div>
+                    <div className="text-sm text-gray-400">Capture your wanderlust</div>
                   </span>
                 </button>
               </div>
             </div>
 
             {/* Travel Insights */}
-            <div className="bg-white rounded-2xl shadow-lg p-6 mt-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Travel Insights</h3>
+            <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-3xl border border-purple-500/20 p-6">
+              <h3 className="text-xl font-semibold text-purple-100 mb-6">Travel Insights</h3>
               <div className="space-y-4">
-                <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+                <div className="flex items-center justify-between p-4 bg-gradient-to-r from-blue-500/10 to-blue-500/5 border border-blue-500/20 rounded-xl">
                   <div className="flex items-center">
-                    <TrendingUp className="h-5 w-5 text-blue-600 mr-3" />
-                    <span className="text-sm text-blue-800">Most Visited</span>
+                    <TrendingUp className="h-5 w-5 text-blue-400 mr-3" />
+                    <span className="text-sm text-blue-300">Most Visited</span>
                   </div>
-                  <span className="text-sm font-medium text-blue-900">
+                  <span className="text-sm font-medium text-blue-100">
                     {trips.length > 0 ? 
                       (() => {
                         const destCounts = trips.reduce((acc, trip) => {
@@ -582,29 +587,29 @@ const Dashboard = () => {
                           return acc;
                         }, {});
                         const mostVisited = Object.entries(destCounts).sort((a, b) => b[1] - a[1])[0];
-                        return mostVisited ? mostVisited[0] : 'No trips yet';
-                      })() : 'No trips yet'}
+                        return mostVisited ? mostVisited[0] : 'Start exploring';
+                      })() : 'Start exploring'}
                   </span>
                 </div>
                 
-                <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+                <div className="flex items-center justify-between p-4 bg-gradient-to-r from-emerald-500/10 to-emerald-500/5 border border-emerald-500/20 rounded-xl">
                   <div className="flex items-center">
-                    <Star className="h-5 w-5 text-green-600 mr-3" />
-                    <span className="text-sm text-green-800">Next Adventure</span>
+                    <Star className="h-5 w-5 text-emerald-400 mr-3" />
+                    <span className="text-sm text-emerald-300">Next Adventure</span>
                   </div>
-                  <span className="text-sm font-medium text-green-900">
+                  <span className="text-sm font-medium text-emerald-100">
                     {trips.filter(t => t.status === 'planning').length > 0 ? 
                       trips.filter(t => t.status === 'planning')[0]?.destination?.name || 
                       trips.filter(t => t.status === 'planning')[0]?.location : 'Plan one!'}
                   </span>
                 </div>
 
-                <div className="flex items-center justify-between p-3 bg-purple-50 rounded-lg">
+                <div className="flex items-center justify-between p-4 bg-gradient-to-r from-purple-500/10 to-purple-500/5 border border-purple-500/20 rounded-xl">
                   <div className="flex items-center">
-                    <Calendar className="h-5 w-5 text-purple-600 mr-3" />
-                    <span className="text-sm text-purple-800">Total Days</span>
+                    <Calendar className="h-5 w-5 text-purple-400 mr-3" />
+                    <span className="text-sm text-purple-300">Total Days</span>
                   </div>
-                  <span className="text-sm font-medium text-purple-900">
+                  <span className="text-sm font-medium text-purple-100">
                     {trips.reduce((acc, trip) => acc + (trip.numberOfDays || 0), 0)} days
                   </span>
                 </div>
@@ -615,79 +620,79 @@ const Dashboard = () => {
 
         {/* Add Trip Modal */}
         {showAddTrip && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-2xl p-6 w-full max-w-md mx-4">
-              <h3 className="text-xl font-bold text-gray-900 mb-4">Create New Trip</h3>
-                             <form onSubmit={async (e) => {
-                 e.preventDefault();
-                 const formData = new FormData(e.target);
-                 await addNewTrip({
-                   title: formData.get('title'),
-                   destination: { name: formData.get('destination') },
-                   startDate: formData.get('startDate'),
-                   endDate: formData.get('endDate'),
-                   budget: formData.get('budget'),
-                   travelGroup: formData.get('travelGroup'),
-                   status: 'planning'
-                 });
-               }}>
-                <div className="space-y-4">
+          <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50">
+            <div className="bg-gradient-to-br from-gray-900 to-gray-800 border border-amber-500/30 rounded-3xl p-8 w-full max-w-md mx-4 shadow-2xl">
+              <h3 className="text-2xl font-bold bg-gradient-to-r from-amber-400 to-amber-200 bg-clip-text text-transparent mb-6">Create New Journey</h3>
+              <form onSubmit={async (e) => {
+                e.preventDefault();
+                const formData = new FormData(e.target);
+                await addNewTrip({
+                  title: formData.get('title'),
+                  destination: { name: formData.get('destination') },
+                  startDate: formData.get('startDate'),
+                  endDate: formData.get('endDate'),
+                  budget: formData.get('budget'),
+                  travelGroup: formData.get('travelGroup'),
+                  status: 'planning'
+                });
+              }}>
+                <div className="space-y-5">
                   <input
                     name="title"
                     type="text"
-                    placeholder="Trip Title"
+                    placeholder="Journey Title"
                     required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-300"
                   />
                   <input
                     name="destination"
                     type="text"
                     placeholder="Destination"
                     required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-300"
                   />
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-2 gap-4">
                     <input
                       name="startDate"
                       type="date"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-xl text-white focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-300"
                     />
                     <input
                       name="endDate"
                       type="date"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-xl text-white focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-300"
                     />
                   </div>
                   <input
                     name="budget"
                     type="text"
                     placeholder="Budget (optional)"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-300"
                   />
                   <select
                     name="travelGroup"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-xl text-white focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-300"
                   >
-                    <option value="Solo">Solo</option>
-                    <option value="Couple">Couple</option>
-                    <option value="Family">Family</option>
-                    <option value="Friends">Friends</option>
-                    <option value="Group">Group</option>
+                    <option value="Solo">Solo Adventure</option>
+                    <option value="Couple">Romantic Getaway</option>
+                    <option value="Family">Family Expedition</option>
+                    <option value="Friends">Friends Adventure</option>
+                    <option value="Group">Group Journey</option>
                   </select>
                 </div>
-                <div className="flex space-x-3 mt-6">
+                <div className="flex space-x-4 mt-8">
                   <button
                     type="button"
                     onClick={() => setShowAddTrip(false)}
-                    className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+                    className="flex-1 px-6 py-3 border border-gray-600 text-gray-300 rounded-xl hover:bg-gray-800 transition-all duration-300"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                    className="flex-1 px-6 py-3 bg-gradient-to-r from-amber-500 to-amber-400 text-black font-medium rounded-xl hover:from-amber-400 hover:to-amber-300 transition-all duration-300 shadow-lg shadow-amber-500/25"
                   >
-                    Create Trip
+                    Create Journey
                   </button>
                 </div>
               </form>
@@ -697,57 +702,57 @@ const Dashboard = () => {
 
         {/* Add Bucket List Modal */}
         {showAddBucket && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-2xl p-6 w-full max-w-md mx-4">
-              <h3 className="text-xl font-bold text-gray-900 mb-4">Add to Bucket List</h3>
-                             <form onSubmit={async (e) => {
-                 e.preventDefault();
-                 const formData = new FormData(e.target);
-                 const result = await addToBucketList(
-                   formData.get('destination'),
-                   formData.get('priority'),
-                   formData.get('notes')
-                 );
-                 if (result.success) {
-                   setShowAddBucket(false);
-                 }
-               }}>
-                <div className="space-y-4">
+          <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50">
+            <div className="bg-gradient-to-br from-gray-900 to-gray-800 border border-red-500/30 rounded-3xl p-8 w-full max-w-md mx-4 shadow-2xl">
+              <h3 className="text-2xl font-bold bg-gradient-to-r from-red-400 to-red-200 bg-clip-text text-transparent mb-6">Add Dream Destination</h3>
+              <form onSubmit={async (e) => {
+                e.preventDefault();
+                const formData = new FormData(e.target);
+                const result = await addToBucketList(
+                  formData.get('destination'),
+                  formData.get('priority'),
+                  formData.get('notes')
+                );
+                if (result.success) {
+                  setShowAddBucket(false);
+                }
+              }}>
+                <div className="space-y-5">
                   <input
                     name="destination"
                     type="text"
                     placeholder="Destination name"
                     required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-300"
                   />
                   <select
                     name="priority"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-xl text-white focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-300"
                   >
-                    <option value="low">Low Priority</option>
-                    <option value="medium">Medium Priority</option>
-                    <option value="high">High Priority</option>
+                    <option value="low">🌱 Low Priority</option>
+                    <option value="medium">⭐ Medium Priority</option>
+                    <option value="high">🔥 High Priority</option>
                   </select>
                   <textarea
                     name="notes"
                     placeholder="Notes (optional)"
                     rows="3"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-300 resize-none"
                   />
                 </div>
-                <div className="flex space-x-3 mt-6">
+                <div className="flex space-x-4 mt-8">
                   <button
                     type="button"
                     onClick={() => setShowAddBucket(false)}
-                    className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+                    className="flex-1 px-6 py-3 border border-gray-600 text-gray-300 rounded-xl hover:bg-gray-800 transition-all duration-300"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+                    className="flex-1 px-6 py-3 bg-gradient-to-r from-red-500 to-red-400 text-white font-medium rounded-xl hover:from-red-400 hover:to-red-300 transition-all duration-300 shadow-lg shadow-red-500/25"
                   >
-                    Add to Bucket List
+                    Add to Dreams
                   </button>
                 </div>
               </form>
@@ -758,25 +763,31 @@ const Dashboard = () => {
         {/* Copilot Integration */}
         <CopilotPopup
           defaultOpen={false}
-          instructions={`You are a travel planning assistant helping users manage their dashboard. You can:
+          instructions={`You are a sophisticated travel concierge assistant helping users curate their luxury travel dashboard. You can:
 
 CORE FUNCTIONS:
-1. addToBucketList(destination, priority, notes) - Add destinations to bucket list
+1. addToBucketList(destination, priority, notes) - Add destinations to dream list
 2. createNewTrip(title, destination, startDate, endDate, budget) - Create new travel plans
 
-RULES:
-- Help users organize their travel plans and bucket list
-- Suggest destinations based on their interests
-- Help prioritize bucket list items
-- Provide travel planning tips and advice
-- Keep responses helpful and actionable
+PERSONALITY:
+- Speak with elegance and sophistication
+- Use travel industry terminology 
+- Be inspiring and aspirational
+- Focus on experiences, not just destinations
 
-If asked about non-travel topics, respond: "I'm here to help with your travel planning and bucket list management."`}
+RULES:
+- Help users curate exceptional travel experiences
+- Suggest unique and luxurious destinations
+- Provide insider travel tips and recommendations
+- Maintain an air of exclusivity and refinement
+- Keep responses inspiring and actionable
+
+If asked about non-travel topics, respond: "I'm here to curate your extraordinary travel experiences and help you discover the world's hidden gems."`}
           messages={[
             {
               id: "1",
               role: "assistant",
-              content: `Hi! I can help you manage your travel dashboard. I can add destinations to your bucket list, create new trips, and help you organize your travel plans. What would you like to do?`,
+              content: `Welcome to your personal travel concierge. I'm here to help you curate extraordinary journeys and discover the world's most captivating destinations. Whether you'd like to add a dream destination to your collection or craft a new adventure, I'm at your service. What exquisite experience shall we plan today?`,
             },
           ]}
         />
