@@ -235,7 +235,7 @@ const tripSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    required: true, // Required again since we have Clerk auth
+    required: false, // was true, now optional for unauthenticated trips
     index: true
   },
   
