@@ -159,6 +159,7 @@ const SelectionCard = ({ item, isSelected, onClick }) => (
 
 const Page = () => {
   const router = useRouter();
+  const { user, isLoaded, isSignedIn } = useUser();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     countryId: null,
@@ -219,6 +220,24 @@ const Page = () => {
       const lastBrace = clean.lastIndexOf("}");
       clean = clean.slice(firstBrace, lastBrace + 1);
 
+      // Attempt strict parse, then try a few safe repairs if needed
+      const normalizeJsonText = (text) => {
+        return text
+          .replace(/[\u2018\u2019]/g, "'")
+          .replace(/[\u201C\u201D]/g, '"')
+          .replace(/`/g, '');
+      };
+
+      const repairJsonText = (text) => {
+        let t = text;
+        // Insert commas between adjacent objects/arrays
+        t = t.replace(/}\s*{/g, '},{');
+        t = t.replace(/]\s*\[/g, '],[');
+        // Remove trailing commas before closing braces/brackets
+        t = t.replace(/,(\s*[}\]])/g, '$1');
+        return t;
+      };
+
       let parsed = JSON.parse(clean);
       const base = parsed?.trip ? parsed.trip : parsed;
 
@@ -243,13 +262,78 @@ const Page = () => {
         budget: base.budget || formData.budget,
         travelers: base.travelers || formData.travelers,
         bestTimeToVisit: base.bestTimeToVisit || "",
-        hotels: Array.isArray(base.hotels) ? base.hotels : [],
-        suggestedItinerary,
-        disclaimer: base.disclaimer || "This is an AI-generated plan. Please verify details before booking.",
+        itinerary: suggestedItinerary,
+        hotels: Array.isArray(base.hotels) ? base.hotels.map(hotel => ({
+          name: hotel.hotelName || hotel.name || "Hotel",
+          address: hotel.hotelAddress || hotel.address || "Address not specified",
+          price: {
+            amount: hotel.price || 0,
+            currency: "USD",
+            perNight: true
+          },
+          rating: hotel.rating || 0,
+          description: hotel.descriptions || hotel.description || "",
+          imageUrl: hotel.hotelImageUrl || hotel.imageUrl || "",
+          amenities: [],
+          bookingReference: ""
+        })) : [],
+        
+        // AI metadata
+        aiPrompt: FINAL_PROMPT,
+        
+        // Set default values for required fields
+        status: "planning",
+        isPublic: false,
+        notes: "",
+        tags: []
       };
 
-      localStorage.setItem("tripPlan", JSON.stringify(targetPlan));
-      router.push("/travel-plan");
+      // Save to MongoDB instead of localStorage
+      try {
+        const response = await fetch('/api/trips', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(tripDataForMongo)
+        });
+
+        if (!response.ok) {
+          let errorMessage = `Failed to save trip (${response.status})`;
+          
+          try {
+            const contentType = response.headers.get('content-type');
+            if (contentType && contentType.includes('application/json')) {
+              const errorData = await response.json();
+              errorMessage = errorData.error || errorData.message || errorMessage;
+              if (errorData.validationErrors) {
+                errorMessage += `: ${errorData.validationErrors.map(e => e.message).join(', ')}`;
+              }
+            } else {
+              const errorText = await response.text();
+              if (errorText.startsWith('<!DOCTYPE')) {
+                errorMessage = 'Server error - please check if MongoDB is running and restart the server';
+              } else {
+                errorMessage = errorText || errorMessage;
+              }
+            }
+          } catch (parseError) {
+            console.error('Error parsing error response:', parseError);
+            errorMessage = 'Failed to parse server error response';
+          }
+          
+          throw new Error(errorMessage);
+        }
+
+        const { trip } = await response.json();
+        console.log('Trip saved to MongoDB:', trip);
+        
+        // Navigate to travel plan with trip ID
+        router.push(`/travel-plan/${trip._id}`);
+      } catch (saveError) {
+        console.error('Error saving trip to MongoDB:', saveError);
+        toast.error(`Failed to save trip: ${saveError.message}`);
+        setLoading(false);
+        return;
+      }
     } catch (err) {
       console.error("Error generating trip:", err);
       toast.error("Something went wrong. Please try again later.");
@@ -257,6 +341,15 @@ const Page = () => {
       setLoading(false);
     }
   };
+
+  // Show loading while checking authentication
+  if (!isLoaded || !isSignedIn) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-amber-500" />
+      </div>
+    );
+  }
 
   return (
     <div className="bg-black min-h-screen text-gray-200 relative overflow-hidden">
