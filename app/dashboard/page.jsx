@@ -127,6 +127,7 @@ const Dashboard = () => {
       console.error('Error adding trip:', error);
     }
   }, [trips, updateStats]);
+  
 
   // Add to bucket list
   const addToBucketList = useCallback(async (destination, priority = 'medium', notes = '') => {
@@ -152,7 +153,16 @@ const Dashboard = () => {
       return { success: false, error: 'Network error' };
     }
   }, [trips, updateStats]);
-
+  const visitedLocations = trips
+  .map(trip => {
+    const lat = trip.destination?.lat;
+    const lng = trip.destination?.lng;
+    if (lat && lng) {
+      return [lat, lng, 1]; 
+    }
+    return null;
+  })
+  .filter(Boolean);
   // Remove from bucket list
   const removeFromBucketList = useCallback(async (id) => {
     try {
@@ -241,6 +251,8 @@ const Dashboard = () => {
       if (!title || !destination) {
         return { success: false, error: "Title and destination are required" };
       }
+
+    
       
       const tripData = {
         title,
@@ -323,6 +335,7 @@ const Heatmap = dynamic(
               </div>
             </div>
           </div>
+          
 
           <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-6 border border-emerald-500/20 hover:border-emerald-400/40 transition-all duration-300">
             <div className="flex items-center">
@@ -374,6 +387,7 @@ const Heatmap = dynamic(
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+       
           {/* Travel Plans Section */}
           <div className="lg:col-span-2">
             <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-3xl border border-amber-500/20 p-8 backdrop-blur-sm">
@@ -647,13 +661,14 @@ const Heatmap = dynamic(
             </div>
           </div>
         </div>
-        <div>
-      <h1>My Visited Locations Heatmap 🗺️</h1>
-      <p>This map shows a heatmap of all the places I've been.</p>
-      
-      {/* The map component will only render on the client side */}
-      <Heatmap data={locations} />
-    </div>
+        <div className="my-12">
+  <h2 className="text-3xl font-bold text-amber-100 mb-4 text-center">
+    Visited Locations Heatmap
+  </h2>
+  <div className="rounded-2xl overflow-hidden border border-amber-500/30 shadow-lg">
+    <Heatmap points={visitedLocations} />
+  </div>
+</div>
 
         {/* Add Trip Modal */}
         {showAddTrip && (

@@ -7,9 +7,11 @@ import { Button } from "./ui/button";
 
 // FIXED: Define the navItems array that was missing.
 const navItems = [
-  { name: 'Dashboard', href: '/dashboard' },
   { name: 'Create Trip', href: '/create-trip' },
   { name: 'Community', href: '/community' },
+  { name: 'Dashboard', href: '/dashboard' },
+  
+  
 
 ];
 
