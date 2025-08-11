@@ -3,7 +3,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import Header from "@/components/Header";
 import { ClerkProvider } from "@clerk/nextjs";
-import UserProfile from "@/components/UserProfile";
+import { CopilotKit } from "@copilotkit/react-core";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,16 +27,19 @@ export default function RootLayout({ children }) {
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
+          <CopilotKit
+           publicApiKey="ck_pub_e07eb34c750ad8e6ab529c51ccb1d8e1">
+  {/* Your App Components */}
           <ThemeProvider
             attribute="class"
             defaultTheme="light"
             enableSystem
             disableTransitionOnChange
-          >
-            <UserProfile />
+            >
             <Header />
             <main className="min-h-screen">{children}</main>
           </ThemeProvider>
+            </CopilotKit>
         </body>
       </html>
     </ClerkProvider>

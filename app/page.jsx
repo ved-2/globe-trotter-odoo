@@ -251,10 +251,13 @@ export default function Home() {
               Start Planning Free
               <ChevronRight size={18} className="ml-2 group-hover:translate-x-1 transition-transform duration-300" />
             </Button>
-    </Link>
+            </Link>
+            <Link href="/community">
+            
             <Button size="lg" variant="outline">
-              Watch Demo
+              Community
             </Button>
+            </Link>
           </div>
         </div>
       </section>

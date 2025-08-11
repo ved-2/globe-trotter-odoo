@@ -83,29 +83,59 @@ const testReviews = [
     tags: ["Safari", "Wildlife", "Photography", "Adventure"]
   }
 ];
+const FloatingParticles = () => {
+  const [mounted, setMounted] = React.useState(false);
+  
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
 
-const FloatingParticles = () => (
-  <div className="absolute inset-0 overflow-hidden pointer-events-none">
-    {[...Array(30)].map((_, i) => (
-      <div
-        key={i}
-        className={`absolute rounded-full animate-pulse ${
-          i % 3 === 0 ? 'bg-amber-400' : i % 3 === 1 ? 'bg-orange-400' : 'bg-yellow-400'
-        }`}
-        style={{
-          width: `${Math.random() * 4 + 1}px`,
-          height: `${Math.random() * 4 + 1}px`,
-          left: `${Math.random() * 100}%`,
-          top: `${Math.random() * 100}%`,
-          animationDelay: `${Math.random() * 5}s`,
-          animationDuration: `${3 + Math.random() * 4}s`,
-          opacity: Math.random() * 0.5 + 0.2,
-        }}
-      />
-    ))}
-  </div>
-);
+  if (!mounted) {
+    return (
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {[...Array(30)].map((_, i) => (
+          <div
+            key={i}
+            className={`absolute rounded-full animate-pulse ${
+              i % 3 === 0 ? 'bg-amber-400' : i % 3 === 1 ? 'bg-orange-400' : 'bg-yellow-400'
+            }`}
+            style={{
+              width: '2px',
+              height: '2px',
+              left: '50%',
+              top: '50%',
+              animationDelay: '2s',
+              animationDuration: '5s',
+              opacity: 0.3,
+            }}
+          />
+        ))}
+      </div>
+    );
+  }
 
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {[...Array(30)].map((_, i) => (
+        <div
+          key={i}
+          className={`absolute rounded-full animate-pulse ${
+            i % 3 === 0 ? 'bg-amber-400' : i % 3 === 1 ? 'bg-orange-400' : 'bg-yellow-400'
+          }`}
+          style={{
+            width: `${Math.random() * 4 + 1}px`,
+            height: `${Math.random() * 4 + 1}px`,
+            left: `${Math.random() * 100}%`,
+            top: `${Math.random() * 100}%`,
+            animationDelay: `${Math.random() * 5}s`,
+            animationDuration: `${3 + Math.random() * 4}s`,
+            opacity: Math.random() * 0.5 + 0.2,
+          }}
+        />
+      ))}
+    </div>
+  );
+};
 
 
 
@@ -400,8 +430,8 @@ export default function CommunityPage() {
       <div className="fixed inset-0 bg-[radial-gradient(circle_at_70%_70%,rgba(249,115,22,0.1),transparent_50%)]" />
       <FloatingParticles />
       
-      {/* Header */}
-      <Header />
+      
+   
       
       {/* Hero Section */}
       <section className="container mx-auto pt-32 pb-12 text-center relative z-10 px-5">
