@@ -43,7 +43,7 @@ const TravelPlan = () => {
       setChatMessages(messages);
     }
   }, [chatKey]);
-  
+
   // --- Data Persistence ---
   // A single, robust function to patch any part of the trip plan
   const persistPlan = useCallback(async (updatedFields) => {
@@ -64,7 +64,7 @@ const TravelPlan = () => {
       return false;
     }
   }, [params?.id]);
-  
+
   // A specific handler for the itinerary which is also used by Drag-and-Drop
   const handleItineraryChange = useCallback(async (newItinerary) => {
     // Renumber days consistently
@@ -167,8 +167,8 @@ const TravelPlan = () => {
       newItinerary[dayIndex] = { ...originalDay, activities: scheduledActivities };
 
       const success = await persistPlan({ itinerary: newItinerary });
-
-      if (success) {
+        
+        if (success) {
         return { success: true, message: `I've generated a realistic schedule for Day ${dayNumber}. Please review it.` };
       } else {
         return { success: false, error: "I failed to save the new schedule." };
@@ -179,22 +179,22 @@ const TravelPlan = () => {
   // Keep other Copilot actions (addDay, removeDay, addActivity, etc.) as they are.
   // They can be simplified to use `persistPlan` as well. Example:
   useCopilotAction({
-    name: "removeDayFromItinerary",
+    name: "removeDayFromItinerary", 
     description: "Remove a day from the travel itinerary",
     parameters: [{ name: "dayNumber", type: "number", description: "1-based day number to remove" }],
     handler: async ({ dayNumber }) => {
         if (!plan?.itinerary) return { success: false, error: "No itinerary." };
-        
-        const dayIdx = Number(dayNumber) - 1;
-        if (dayIdx < 0 || dayIdx >= plan.itinerary.length) {
+      
+      const dayIdx = Number(dayNumber) - 1;
+      if (dayIdx < 0 || dayIdx >= plan.itinerary.length) {
             return { success: false, error: "Day number out of range." };
         }
 
         const newItinerary = plan.itinerary.filter((_, idx) => idx !== dayIdx);
         const success = await handleItineraryChange(newItinerary);
 
-        if (success) {
-            await persistPlan({
+      if (success) {
+        await persistPlan({ 
                 numberOfDays: newItinerary.length,
                 duration: `${newItinerary.length} days`
             });
@@ -274,7 +274,7 @@ const TravelPlan = () => {
               itinerary={plan.itinerary}
               onItineraryChange={handleItineraryChange}
             />
-          </div>
+                </div>
 
           {/* Sidebar: Calendar & AI Commands */}
           <div className="mt-8 lg:mt-0">
@@ -282,7 +282,7 @@ const TravelPlan = () => {
                 tripDays={tripDays}
                 destination={plan.destination?.name || plan.location}
             />
-          </div>
+                    </div>
         </main>
         
         <HotelSuggestions hotels={plan.hotels} />
@@ -290,16 +290,16 @@ const TravelPlan = () => {
         {plan.disclaimer && (
             <div className="mt-8 p-4 bg-yellow-50 text-yellow-800 rounded-lg text-sm">
                 <strong>Disclaimer:</strong> {plan.disclaimer}
-            </div>
-        )}
-      </div>
+                  </div>
+                )}
+              </div>
 
-      <CopilotPopup
+              <CopilotPopup
         // Your CopilotPopup props remain the same
         instructions="Your detailed instructions..."
         messages={chatMessages}
         onMessagesChange={saveChatMessages}
-        defaultOpen={false}
+                defaultOpen={false}
       />
     </div>
   );

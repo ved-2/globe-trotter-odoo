@@ -25,6 +25,8 @@ import {
 } from "lucide-react";
 import { CopilotPopup } from "@copilotkit/react-ui";
 import { useCopilotReadable, useCopilotAction, CopilotKit } from "@copilotkit/react-core";
+import Link from "next/link";
+import Heatmap from "@/components/Heatmap";
 
 const Dashboard = () => {
   const router = useRouter();
@@ -280,6 +282,28 @@ const Dashboard = () => {
     );
   }
 
+  const [locations, setLocations] = useState([]);
+
+  // Dynamically import the Heatmap component with SSR turned off
+// In app/dashboard/page.jsx
+
+const Heatmap = useMemo(() => dynamic(
+  () => import('@/components/Heatmap.js'), // Use the path alias
+  { ssr: false }
+), []);; 
+
+  useEffect(() => {
+    // Fetch data from our API route
+    const fetchData = async () => {
+      const response = await fetch('/api/locations');
+      const data = await response.json();
+      setLocations(data);
+    };
+
+    fetchData();
+  }, []);
+
+
   return (
 
     <div className="min-h-screen bg-black text-white">
@@ -365,13 +389,14 @@ const Dashboard = () => {
             <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-3xl border border-amber-500/20 p-8 backdrop-blur-sm">
               <div className="flex items-center justify-between mb-8">
                 <h2 className="text-3xl font-bold bg-gradient-to-r from-amber-400 to-amber-200 bg-clip-text text-transparent">Your Travel Odyssey</h2>
+                <Link href="/create-trip">
                 <button
-                  onClick={() => setShowAddTrip(true)}
                   className="flex items-center px-6 py-3 bg-gradient-to-r from-amber-500 to-amber-400 text-black font-medium rounded-xl hover:from-amber-400 hover:to-amber-300 transition-all duration-300 shadow-lg shadow-amber-500/25"
-                >
+                  >
                   <Plus className="h-5 w-5 mr-2" />
                   New Journey
                 </button>
+                  </Link>
               </div>
 
               {/* Search and Filter */}

@@ -89,10 +89,15 @@ useCopilotReadable({
         </div>
       </div>
       {/* 📄 View PDF Button */}
-<div className="mt-4">
-  <ViewTripPDF tripId={plan._id} /> 
-  {/* Make sure to import ViewTripPDF at the top */}
-</div>
+      // Example button on a page where you have the trip._id
+<a
+  href={`/api/trips/pdf/${trip._id}`} 
+  target="_blank" // Opens in a new tab to start the download
+  rel="noopener noreferrer"
+  className="px-4 py-2 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700"
+>
+  Download as PDF
+</a>
 
       {/* Itinerary */}
       <div>
