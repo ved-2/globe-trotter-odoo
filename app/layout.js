@@ -24,9 +24,7 @@ export default function RootLayout({ children }) {
   return (
     <ClerkProvider>
       <html lang="en">
-        <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-        >
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
           <CopilotKit
            publicApiKey="ck_pub_e07eb34c750ad8e6ab529c51ccb1d8e1">
   {/* Your App Components */}

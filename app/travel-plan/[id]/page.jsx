@@ -263,7 +263,7 @@ const TravelPlan = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-black">
       <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <TripHeader plan={plan} />
 
@@ -274,7 +274,7 @@ const TravelPlan = () => {
               itinerary={plan.itinerary}
               onItineraryChange={handleItineraryChange}
             />
-                </div>
+          </div>
 
           {/* Sidebar: Calendar & AI Commands */}
           <div className="mt-8 lg:mt-0">
@@ -282,7 +282,7 @@ const TravelPlan = () => {
                 tripDays={tripDays}
                 destination={plan.destination?.name || plan.location}
             />
-                    </div>
+          </div>
         </main>
         
         <HotelSuggestions hotels={plan.hotels} />
@@ -290,17 +290,47 @@ const TravelPlan = () => {
         {plan.disclaimer && (
             <div className="mt-8 p-4 bg-yellow-50 text-yellow-800 rounded-lg text-sm">
                 <strong>Disclaimer:</strong> {plan.disclaimer}
-                  </div>
-                )}
-              </div>
+            </div>
+        )}
+      </div>
 
-              <CopilotPopup
+      <CopilotPopup
         // Your CopilotPopup props remain the same
         instructions="Your detailed instructions..."
         messages={chatMessages}
         onMessagesChange={saveChatMessages}
-                defaultOpen={false}
+        defaultOpen={false}
       />
+
+      {/* Amber gradient overlay for foreground effect */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none fixed inset-0 z-0"
+        style={{
+          background: "linear-gradient(90deg, #fbbf24 0%, #f59e42 100%)",
+          opacity: 0.12,
+          mixBlendMode: "lighten"
+        }}
+      />
+      {/* Foreground text color override for amber gradient */}
+      <style jsx global>{`
+        .max-w-8xl, .max-w-8xl * {
+          color: transparent;
+          background-clip: text;
+          -webkit-background-clip: text;
+          background-image: linear-gradient(90deg, #fbbf24 0%, #f59e42 100%);
+        }
+        .max-w-8xl strong, .max-w-8xl h1, .max-w-8xl h2, .max-w-8xl h3, .max-w-8xl h4, .max-w-8xl h5, .max-w-8xl h6 {
+          color: transparent !important;
+          background-clip: text !important;
+          -webkit-background-clip: text !important;
+          background-image: linear-gradient(90deg, #fbbf24 0%, #f59e42 100%) !important;
+        }
+        .max-w-8xl .bg-yellow-50, .max-w-8xl .text-yellow-800 {
+          color: #fbbf24 !important;
+          background: none !important;
+        }
+      `}</style>
     </div>
   );
 };
