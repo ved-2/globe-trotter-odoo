@@ -3,7 +3,6 @@ import React, { useEffect, useState, useCallback } from "react";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import "@copilotkit/react-ui/styles.css";
-import Heatmap from "@/components/HeatMap";
 import { 
   Loader2, 
   MapPin, 
