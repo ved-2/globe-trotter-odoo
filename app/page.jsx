@@ -5,6 +5,7 @@ import {
   Map, Calendar, Users, ChevronRight, ArrowRight, Sparkles, Star, 
   Shield, Zap, Heart 
 } from "lucide-react";
+import Link from "next/link";
 
 const faqs = [
   {
@@ -245,13 +246,18 @@ export default function Home() {
           </p>
           
           <div className="flex flex-col sm:flex-row justify-center gap-4 items-center">
+            <Link href="/create-trip">
             <Button size="lg" className="group shadow-2xl shadow-amber-500/25">
               Start Planning Free
               <ChevronRight size={18} className="ml-2 group-hover:translate-x-1 transition-transform duration-300" />
             </Button>
+            </Link>
+            <Link href="/community">
+            
             <Button size="lg" variant="outline">
-              Watch Demo
+              Community
             </Button>
+            </Link>
           </div>
         </div>
       </section>

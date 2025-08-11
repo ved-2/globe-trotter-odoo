@@ -276,7 +276,7 @@ const Page = () => {
           </p>
         </div>
 
-        <div className="flex flex-col gap-16 max-w-6xl mx-auto">
+        <div className="flex flex-col gap-16 max-w-6xl mx-auto r">
           {/* Destination */}
           <div className="space-y-4">
             <div className="flex items-center gap-3 mb-6">

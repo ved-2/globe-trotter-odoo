@@ -17,13 +17,7 @@ const Header = ({ currentPath = "/" }) => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const navItems = [
-    { name: "Home", href: "/" },
-    { name: "Features", href: "/features" },
-    { name: "Community", href: "/community" },
-    { name: "About", href: "/about" },
-    { name: "Contact", href: "/contact" },
-  ];
+  
 
   const handleNavClick = (href) => {
     setIsMenuOpen(false);
@@ -48,7 +42,7 @@ const Header = ({ currentPath = "/" }) => {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8">
+          {/* <nav className="hidden md:flex items-center space-x-8">
             {navItems.map((item) => (
               <Link
                 key={item.name}
@@ -62,7 +56,7 @@ const Header = ({ currentPath = "/" }) => {
                 {item.name}
               </Link>
             ))}
-          </nav>
+          </nav> */}
 
           {/* Desktop Auth Buttons */}
           <div className="hidden md:flex items-center space-x-4">

@@ -1,9 +1,16 @@
 "use client";
 
+import { CopilotPopup } from "@copilotkit/react-ui";
 import React, { useEffect, useState } from "react";
+import "@copilotkit/react-ui/styles.css";
+import { useCopilotReadable } from "@copilotkit/react-core";
 
 const TravelPlan = () => {
   const [plan, setPlan] = useState(null);
+useCopilotReadable({
+  description: "Read travel plan from local storage",
+  value: plan,
+})
 
   useEffect(() => {
     const data = localStorage.getItem("tripPlan");
@@ -131,6 +138,29 @@ const TravelPlan = () => {
           <strong>Disclaimer:</strong> {plan.disclaimer}
         </p>
       </div>
+     <CopilotPopup
+  defaultOpen={true}
+  instructions={`You are a strict trip-planning assistant.
+  Your rules:
+  1. ONLY respond to travel-related queries (destinations, itineraries, packing lists, budgets, activities, travel tips).
+  2. If the user asks about anything unrelated to trips, reply: "I'm only here to help with travel plans."
+  3. Before confirming any itinerary, check for IMPOSSIBLE or unrealistic plans:
+     - Travel times shorter than realistically possible
+     - Visiting too many far-apart locations in one day
+     - Budgets that cannot cover costs
+     - Dates that are in the past
+  4. If something is impossible, clearly say so and suggest a realistic alternative.
+  5. Keep answers short, practical, and focused on real travel advice.`}
+  messages={[
+    {
+      id: "1",
+      role: "assistant",
+      content: plan
+        ? `Hi! I see you have a trip planned to ${plan.destination}. Would you like me to review it for feasibility?`
+        : "Hi! Tell me your destination and I’ll help plan a realistic trip for you.",
+    },
+  ]}
+/>
     </div>
   );
 };
