@@ -407,11 +407,11 @@ const Page = () => {
   return (
     <div className="bg-black min-h-screen text-gray-200 relative overflow-hidden">
       {/* Ambient background effects */}
-      <div className="absolute inset-0 bg-gradient-to-br from-amber-900/5 via-transparent to-amber-800/5" />
+      <div className="absolute inset-0 mt-10 bg-gradient-to-br from-amber-900/5 via-transparent to-amber-800/5" />
       <div className="absolute top-0 left-1/4 w-96 h-96 bg-amber-500/3 rounded-full blur-3xl" />
       <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-amber-600/3 rounded-full blur-3xl" />
       
-      <div className="relative z-10 sm:px-10 md:px-32 lg:px-56 xl:px-72 px-6 py-16">
+      <div className="relative z-10 mt-7 sm:px-10 md:px-32 lg:px-56 xl:px-72 px-6 py-16">
         {/* Header Section */}
         <div className="text-center mb-16">
           <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-amber-500/20 to-amber-600/20 rounded-full mb-6 border border-amber-500/30">

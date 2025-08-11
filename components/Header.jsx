@@ -9,7 +9,8 @@ import { Button } from "./ui/button";
 const navItems = [
   { name: 'Dashboard', href: '/dashboard' },
   { name: 'Create Trip', href: '/create-trip' },
-  { name: 'Bucket List', href: '/bucket-list' },
+  { name: 'Community', href: '/community' },
+
 ];
 
 const Header = ({ currentPath = "/" }) => {
