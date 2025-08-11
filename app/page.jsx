@@ -1,8 +1,9 @@
 "use client";
 import React from "react";
+import Layout from "../components/Layout";
 import { 
-  Map, Calendar, Users, ChevronRight, ArrowRight, Sparkles, Globe, Star, 
-  Menu, X, User, LogIn, Settings, Heart, Shield, Zap 
+  Map, Calendar, Users, ChevronRight, ArrowRight, Sparkles, Star, 
+  Shield, Zap, Heart 
 } from "lucide-react";
 
 const faqs = [
@@ -72,130 +73,6 @@ const features = [
   }
 ];
 
-// Enhanced floating particles with different colors
-const FloatingParticles = () => (
-  <div className="absolute inset-0 overflow-hidden pointer-events-none">
-    {[...Array(30)].map((_, i) => (
-      <div
-        key={i}
-        className={`absolute rounded-full animate-pulse ${
-          i % 3 === 0 ? 'bg-amber-400' : i % 3 === 1 ? 'bg-orange-400' : 'bg-yellow-400'
-        }`}
-        style={{
-          width: `${Math.random() * 4 + 1}px`,
-          height: `${Math.random() * 4 + 1}px`,
-          left: `${Math.random() * 100}%`,
-          top: `${Math.random() * 100}%`,
-          animationDelay: `${Math.random() * 5}s`,
-          animationDuration: `${3 + Math.random() * 4}s`,
-          opacity: Math.random() * 0.5 + 0.2,
-        }}
-      />
-    ))}
-  </div>
-);
-
-// Enhanced Header Component
-const Header = () => {
-  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
-  const [isScrolled, setIsScrolled] = React.useState(false);
-
-  React.useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  const navItems = [
-    { name: 'Features', href: '#features' },
-    { name: 'Pricing', href: '#pricing' },
-    { name: 'About', href: '#about' },
-    { name: 'Contact', href: '#contact' }
-  ];
-
-  return (
-    <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-      isScrolled 
-        ? 'bg-black/80 backdrop-blur-md border-b border-amber-500/20' 
-        : 'bg-transparent'
-    }`}>
-      <div className="container mx-auto px-5">
-        <div className="flex items-center justify-between h-20">
-          {/* Logo */}
-          <div className="flex items-center space-x-3">
-            <div className="p-2 bg-gradient-to-br from-amber-500 to-orange-500 rounded-xl">
-              <Globe className="w-8 h-8 text-black" />
-            </div>
-            <span className="text-2xl font-bold text-white">GlobeTrotter</span>
-          </div>
-
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8">
-            {navItems.map((item) => (
-              <a
-                key={item.name}
-                href={item.href}
-                className="text-gray-300 hover:text-amber-400 transition-colors duration-200 font-medium"
-              >
-                {item.name}
-              </a>
-            ))}
-          </nav>
-
-          {/* Desktop Auth Buttons */}
-          <div className="hidden md:flex items-center space-x-4">
-            <button className="text-gray-300 hover:text-amber-400 transition-colors duration-200 flex items-center space-x-2">
-              <LogIn className="w-4 h-4" />
-              <span>Login</span>
-            </button>
-            <Button size="md" className="group">
-              Get Started
-              <ChevronRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform duration-200" />
-            </Button>
-          </div>
-
-          {/* Mobile Menu Button */}
-          <button
-            className="md:hidden text-gray-300 hover:text-amber-400 transition-colors duration-200"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-          >
-            {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
-        </div>
-
-        {/* Mobile Menu */}
-        {isMenuOpen && (
-          <div className="md:hidden absolute top-full left-0 right-0 bg-black/95 backdrop-blur-md border-b border-amber-500/20">
-            <div className="px-5 py-6 space-y-4">
-              {navItems.map((item) => (
-                <a
-                  key={item.name}
-                  href={item.href}
-                  className="block text-gray-300 hover:text-amber-400 transition-colors duration-200 font-medium"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  {item.name}
-                </a>
-              ))}
-              <div className="pt-4 border-t border-amber-500/20 space-y-3">
-                <button className="w-full text-left text-gray-300 hover:text-amber-400 transition-colors duration-200 flex items-center space-x-2">
-                  <LogIn className="w-4 h-4" />
-                  <span>Login</span>
-                </button>
-                <Button size="md" className="w-full justify-center">
-                  Get Started
-                </Button>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
-    </header>
-  );
-};
-
 // Enhanced Button component
 const Button = ({ children, size = "md", variant = "default", className = "", ...props }) => {
   const baseClasses = "inline-flex items-center justify-center rounded-xl font-semibold transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 focus:ring-offset-black disabled:opacity-50 disabled:cursor-not-allowed";
@@ -238,7 +115,7 @@ const CardContent = ({ children, className = "", ...props }) => (
   </div>
 );
 
-// Accordion components (unchanged functionality)
+// Accordion components
 const Accordion = ({ children, ...props }) => (
   <div className="space-y-4" {...props}>
     {children}
@@ -338,18 +215,9 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-black relative overflow-hidden">
-      {/* Enhanced background effects */}
-      <div className="fixed inset-0 bg-gradient-to-br from-amber-900/10 via-black to-orange-900/10" />
-      <div className="fixed inset-0 bg-[radial-gradient(circle_at_30%_30%,rgba(251,191,36,0.1),transparent_50%)]" />
-      <div className="fixed inset-0 bg-[radial-gradient(circle_at_70%_70%,rgba(249,115,22,0.1),transparent_50%)]" />
-      <FloatingParticles />
-      
-      {/* Header */}
-      <Header />
-      
+    <Layout currentPath="/">
       {/* ================= HERO SECTION ================= */}
-      <section className="container mx-auto py-32 text-center relative z-10 px-5">
+      <section className="container mx-auto py-20 text-center relative z-10 px-5">
         <div className="relative">
           {/* Enhanced hero glow effect */}
           <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-amber-500/20 rounded-full filter blur-3xl animate-pulse" />
@@ -357,7 +225,7 @@ export default function Home() {
           
           <div className="flex justify-center mb-8">
             <div className="p-4 bg-gradient-to-br from-amber-500 to-orange-500 rounded-full animate-bounce shadow-2xl shadow-amber-500/50">
-              <Globe className="w-12 h-12 text-black" />
+              <Sparkles className="w-12 h-12 text-black" />
             </div>
           </div>
           
@@ -447,7 +315,6 @@ export default function Home() {
       <section className="py-20 text-center px-5 relative z-10">
         <div className="container mx-auto">
           <div className="relative">
-            {/* Enhanced CTA glow effect */}
             <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-r from-amber-500/20 to-orange-500/20 rounded-full filter blur-3xl" />
             
             <div className="relative z-10 bg-gray-900/40 border border-amber-500/30 rounded-3xl p-12 backdrop-blur-sm">
@@ -467,19 +334,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-      {/* Footer */}
-      <footer className="py-12 border-t border-amber-500/20 relative z-10">
-        <div className="container mx-auto px-5 text-center">
-          <div className="flex justify-center items-center space-x-3 mb-6">
-            <div className="p-2 bg-gradient-to-br from-amber-500 to-orange-500 rounded-xl">
-              <Globe className="w-6 h-6 text-black" />
-            </div>
-            <span className="text-xl font-bold text-white">GlobeTrotter</span>
-          </div>
-          <p className="text-gray-400">© 2025 GlobeTrotter. Making travel planning magical.</p>
-        </div>
-      </footer>
-    </div>
+    </Layout>
   );
 }
