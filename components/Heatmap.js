@@ -1,7 +1,6 @@
 // components/Heatmap.js
 import { MapContainer, TileLayer } from 'react-leaflet';
 // import HeatmapLayer from 'react-leaflet-heatmap-layer-v3';
-import { HeatmapLayer } from 'react-leaflet-heatmap-layer-v3';
 
 
 const Heatmap = ({ data }) => {

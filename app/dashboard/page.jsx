@@ -26,6 +26,7 @@ import { CopilotPopup } from "@copilotkit/react-ui";
 import { useCopilotReadable, useCopilotAction, CopilotKit } from "@copilotkit/react-core";
 import Link from "next/link";
 import Heatmap from "@/components/Heatmap";
+import dynamic from "next/dynamic";
 
 const Dashboard = () => {
   const router = useRouter();
@@ -274,10 +275,14 @@ const Dashboard = () => {
   // Dynamically import the Heatmap component with SSR turned off
 // In app/dashboard/page.jsx
 
-const Heatmap = useMemo(() => dynamic(
-  () => import('@/components/Heatmap.js'), // Use the path alias
-  { ssr: false }
-), []);; 
+const Heatmap = dynamic(
+  () => import('@/components/Heatmap'),
+  { 
+    ssr: false,
+    // Optional: show a loading skeleton while the map loads
+    loading: () => <p>Loading map...</p> 
+  }
+); 
 
   useEffect(() => {
     // Fetch data from our API route
