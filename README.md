@@ -3,8 +3,8 @@
 Welcome to **GlobeTrotter**, a modern, AI-powered web application designed to make travel planning seamless, personalized, and enjoyable. Generate detailed itineraries, manage your plans with an interactive interface, and get real-time assistance from an AI copilot.
 
 ## TeamMates
-Vedant Kolte
-Krish Mali
+- Vedant Kolte
+- Krish Mali
 
 ---
 
