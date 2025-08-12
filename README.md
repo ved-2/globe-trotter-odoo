@@ -2,7 +2,14 @@
 
 Welcome to **GlobeTrotter**, a modern, AI-powered web application designed to make travel planning seamless, personalized, and enjoyable. Generate detailed itineraries, manage your plans with an interactive interface, and get real-time assistance from an AI copilot.
 
+## TeamMates
+Vedant Kolte
+Krish Mali
+
 ---
+
+## Demo Link
+--> https://drive.google.com/file/d/1W0gFeExP-jsXp5SSgYtL5IMrjQoGOfhw/view
 
 ## Key Features
 
