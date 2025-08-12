@@ -6,21 +6,21 @@ const isProtectedRoute = createRouteMatcher([
   "/travel-plan(.*)",
   "/trips(.*)",
   "/community(.*)",
-  
 ]);
 
 export default clerkMiddleware(async (auth, req) => {
-  // Don't protect API routes - let them handle their own authentication
-  if (req.nextUrl.pathname.startsWith('/api/')) {
-    return NextResponse.next();
-  }
-
+  // If route is protected and user is not signed in, redirect to sign-in page
   const { userId } = await auth();
 
-  if (!userId && isProtectedRoute(req)) {
+  if (isProtectedRoute(req) && !userId) {
     const signInUrl = new URL("/sign-in", req.url);
     signInUrl.searchParams.set("redirect_url", req.url);
     return NextResponse.redirect(signInUrl);
+  }
+
+  // Allow API routes without middleware interference
+  if (req.nextUrl.pathname.startsWith('/api/')) {
+    return NextResponse.next();
   }
 
   return NextResponse.next();

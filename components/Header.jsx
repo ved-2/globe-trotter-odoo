@@ -5,6 +5,16 @@ import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
 import { LayoutDashboard, PenBox, Globe, ChevronRight, Menu, X, LogIn } from "lucide-react";
 import { Button } from "./ui/button";
 
+// FIXED: Define the navItems array that was missing.
+const navItems = [
+  { name: 'Create Trip', href: '/create-trip' },
+  { name: 'Community', href: '/community' },
+  { name: 'Dashboard', href: '/dashboard' },
+  
+  
+
+];
+
 const Header = ({ currentPath = "/" }) => {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const [isScrolled, setIsScrolled] = React.useState(false);
@@ -16,8 +26,6 @@ const Header = ({ currentPath = "/" }) => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
-  
 
   const handleNavClick = (href) => {
     setIsMenuOpen(false);
@@ -42,33 +50,29 @@ const Header = ({ currentPath = "/" }) => {
           </Link>
 
           {/* Desktop Navigation */}
-          {/* <nav className="hidden md:flex items-center space-x-8">
-            {navItems.map((item) => (
-              <Link
-                key={item.name}
-                href={item.href}
-                className={`transition-colors duration-200 font-medium ${
-                  currentPath === item.href
-                    ? "text-amber-400"
-                    : "text-gray-300 hover:text-amber-400"
-                }`}
-              >
-                {item.name}
-              </Link>
-            ))}
-          </nav> */}
+          {/* FIXED: Uncommented the desktop navigation so it will appear. */}
+          <nav className="hidden md:flex items-center space-x-8">
+            <SignedIn>
+              {navItems.map((item) => (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  className={`transition-colors duration-200 font-medium ${
+                    currentPath === item.href
+                      ? "text-amber-400"
+                      : "text-gray-300 hover:text-amber-400"
+                  }`}
+                >
+                  {item.name}
+                </Link>
+              ))}
+            </SignedIn>
+          </nav>
 
           {/* Desktop Auth Buttons */}
           <div className="hidden md:flex items-center space-x-4">
-            <Link href="/create-trip">
-              <Button className="flex items-center gap-2">
-                <PenBox size={18} />
-                <span className="hidden md:inline">Create Trip</span>
-              </Button>
-            </Link>
-
             <SignedOut>
-              <SignInButton forceRedirectUrl="/onboarding">
+              <SignInButton forceRedirectUrl="/dashboard">
                 <Button variant="outline" className="flex items-center gap-2">
                   <LogIn className="w-4 h-4" />
                   Login
@@ -77,12 +81,6 @@ const Header = ({ currentPath = "/" }) => {
             </SignedOut>
 
             <SignedIn>
-              <Link href="/dashboard">
-                <Button variant="outline" className="flex items-center gap-2">
-                  <LayoutDashboard size={18} />
-                  <span className="hidden md:inline">Dashboard</span>
-                </Button>
-              </Link>
               <UserButton
                 appearance={{
                   elements: { avatarBox: "w-10 h-10" },
@@ -104,24 +102,26 @@ const Header = ({ currentPath = "/" }) => {
         {isMenuOpen && (
           <div className="md:hidden absolute top-full left-0 right-0 bg-black/95 backdrop-blur-md border-b border-amber-500/20">
             <div className="px-5 py-6 space-y-4">
-              {navItems.map((item) => (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  onClick={() => setIsMenuOpen(false)}
-                  className={`block w-full text-left transition-colors duration-200 font-medium ${
-                    currentPath === item.href
-                      ? "text-amber-400"
-                      : "text-gray-300 hover:text-amber-400"
-                  }`}
-                >
-                  {item.name}
-                </Link>
-              ))}
+              <SignedIn>
+                {navItems.map((item) => (
+                  <Link
+                    key={item.name}
+                    href={item.href}
+                    onClick={() => setIsMenuOpen(false)}
+                    className={`block w-full text-left transition-colors duration-200 font-medium ${
+                      currentPath === item.href
+                        ? "text-amber-400"
+                        : "text-gray-300 hover:text-amber-400"
+                    }`}
+                  >
+                    {item.name}
+                  </Link>
+                ))}
+              </SignedIn>
 
               <div className="pt-4 border-t border-amber-500/20 space-y-3">
                 <SignedOut>
-                  <SignInButton forceRedirectUrl="/onboarding">
+                  <SignInButton forceRedirectUrl="/dashboard">
                     <Button
                       variant="outline"
                       className="w-full flex items-center justify-center gap-2"
@@ -130,23 +130,6 @@ const Header = ({ currentPath = "/" }) => {
                     </Button>
                   </SignInButton>
                 </SignedOut>
-
-                <SignedIn>
-                  <Link href="/dashboard">
-                    <Button
-                      variant="outline"
-                      className="w-full flex items-center justify-center gap-2"
-                    >
-                      <LayoutDashboard size={18} /> Dashboard
-                    </Button>
-                  </Link>
-                </SignedIn>
-
-                <Link href="/create-trip">
-                  <Button className="w-full justify-center gap-2">
-                    <PenBox size={18} /> Create Trip
-                  </Button>
-                </Link>
               </div>
             </div>
           </div>
