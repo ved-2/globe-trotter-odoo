@@ -120,3 +120,21 @@
     @apply bg-background text-foreground;
   }
 }
+
+@media print {
+  /* Hide elements you don't want printed */
+  .no-print {
+    display: none !important;
+  }
+
+  /* Adjust fonts, colors, backgrounds for printing */
+  body {
+    background: white !important;
+    color: black !important;
+  }
+
+  /* Example: enlarge fonts for print */
+  h1, h2, h3, p {
+    font-size: 14pt !important;
+  }
+}

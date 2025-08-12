@@ -14,7 +14,7 @@ const TileLayer = dynamic(
 
 
 const Heatmap = ({ data }) => {
-  const position = [23.2156, 72.6369]; // Centered on Gandhinagar, Gujarat
+  const position = [23.2156, 72.6369]; 
 
   return (
     <MapContainer center={position} zoom={7} style={{ height: '500px', width: '100%' }}>

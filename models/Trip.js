@@ -46,7 +46,7 @@ const activitySchema = new mongoose.Schema({
     },
     
     duration: {
-      type: Number, // in minutes
+      type: Number,
       required: false,
       min: 0
     }
@@ -99,13 +99,11 @@ const activitySchema = new mongoose.Schema({
     }
   },
   
-  // AI-generated content
   aiGenerated: {
     type: Boolean,
     default: true
   },
   
-  // User customizations
   notes: {
     type: String,
     trim: true,
@@ -231,15 +229,12 @@ const hotelSchema = new mongoose.Schema({
 
 // Main Trip schema
 const tripSchema = new mongoose.Schema({
-  // User reference
   userId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: false, // was true, now optional for unauthenticated trips
+    type: String,
+    required: false,
     index: true
   },
   
-  // Basic trip information
   title: {
     type: String,
     required: true,
@@ -274,7 +269,6 @@ const tripSchema = new mongoose.Schema({
     }
   },
   
-  // Trip details
   startDate: {
     type: Date,
     required: true
@@ -304,19 +298,15 @@ const tripSchema = new mongoose.Schema({
     required: true
   },
   
-  // AI-generated content
   aiGenerated: {
     type: Boolean,
     default: true
   },
   
-  // Itinerary and activities
   itinerary: [dayItinerarySchema],
   
-  // Accommodation
   hotels: [hotelSchema],
   
-  // Budget tracking
   budgetBreakdown: {
     totalBudget: {
       amount: {
@@ -357,14 +347,12 @@ const tripSchema = new mongoose.Schema({
     }
   },
   
-  // Trip status
   status: {
     type: String,
     enum: ['planning', 'confirmed', 'in-progress', 'completed', 'cancelled'],
     default: 'planning'
   },
   
-  // Additional information
   bestTimeToVisit: {
     type: String,
     trim: true
@@ -386,7 +374,6 @@ const tripSchema = new mongoose.Schema({
     }
   },
   
-  // User notes and customization
   notes: {
     type: String,
     trim: true,
@@ -399,7 +386,6 @@ const tripSchema = new mongoose.Schema({
     maxlength: 50
   }],
   
-  // Sharing and collaboration
   isPublic: {
     type: Boolean,
     default: false
@@ -421,7 +407,6 @@ const tripSchema = new mongoose.Schema({
     }
   }],
   
-  // AI generation metadata
   aiMetadata: {
     model: {
       type: String,
@@ -453,7 +438,7 @@ const tripSchema = new mongoose.Schema({
 tripSchema.virtual('duration').get(function() {
   if (this.startDate && this.endDate) {
     const diffTime = Math.abs(this.endDate - this.startDate);
-    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
   }
   return this.numberOfDays;
 });
@@ -502,32 +487,26 @@ tripSchema.index({ 'destination.country': 1 });
 
 // Pre-save middleware
 tripSchema.pre('save', function(next) {
-  // Ensure endDate is after startDate
-  if (this.startDate && this.endDate && this.startDate >= this.endDate) {
-    return next(new Error('End date must be after start date'));
+  // Calculate endDate if missing but we have startDate and numberOfDays
+  if (this.startDate && this.numberOfDays && !this.endDate) {
+    const date = new Date(this.startDate);
+    date.setDate(date.getDate() + this.numberOfDays - 1);
+    this.endDate = date;
   }
   
-  // Calculate numberOfDays if dates are provided
-  if (this.startDate && this.endDate) {
+  // Calculate numberOfDays if dates are provided but numberOfDays is missing
+  if (this.startDate && this.endDate && !this.numberOfDays) {
     const diffTime = Math.abs(this.endDate - this.startDate);
-    this.numberOfDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    this.numberOfDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+  }
+  
+  // Validate that endDate is not before startDate
+  if (this.startDate && this.endDate && this.startDate > this.endDate) {
+    return next(new Error('End date must be on or after start date'));
   }
   
   next();
 });
-
-// Static method to find trips by user
-tripSchema.statics.findByUser = function(userId, options = {}) {
-  const query = { userId };
-  
-  if (options.status) query.status = options.status;
-  if (options.destination) query['destination.name'] = new RegExp(options.destination, 'i');
-  
-  return this.find(query)
-    .sort(options.sort || { createdAt: -1 })
-    .populate('userId', 'firstName lastName email')
-    .limit(options.limit || 50);
-};
 
 // Instance method to calculate budget
 tripSchema.methods.calculateBudget = function() {

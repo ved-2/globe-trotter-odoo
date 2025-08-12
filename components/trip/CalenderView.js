@@ -14,36 +14,55 @@ const CalendarView = ({ tripDays }) => {
       }
     }
   };
-  
-  const footer = tripDays.length > 0 
-    ? <p>You have {tripDays.length} days selected.</p> 
-    : <p>Please select a day.</p>;
 
+  const footer = tripDays.length > 0 
+    ? <p style={{ fontSize: '0.8rem' }}>You have {tripDays.length} days selected.</p> 
+    : <p style={{ fontSize: '0.8rem' }}>Please select a day.</p>;
+
+  // Diagonally shrink: use a CSS transform: scale and rotate
   return (
-    <DayPicker
-      mode="multiple"
-      min={1}
-      selected={tripDays}
-      onDayClick={handleDayClick}
-      showOutsideDays
-      fixedWeeks
-      month={tripDays[0] || new Date()}
-      footer={footer}
-      styles={{
-        caption_label: { fontWeight: 'bold' },
-        head_cell: { color: '#4a5568' },
-        day_selected: { 
-          backgroundColor: '#3b82f6', 
-          color: 'white',
-          fontWeight: 'bold',
-        },
-        day_today: { color: '#3b82f6' },
-        wrapper: {
-          backgroundColor: 'black',
-          color: 'amber',
-        },
+    <div
+      style={{
+        maxWidth: 180,
+        margin: '0 auto',
+        transform: 'scale(1) ',
+        transformOrigin: 'top left',
+        boxShadow: '0 2px 12px 0 rgba(0,0,0,0.10)',
+        borderRadius: 10,
+        overflow: 'hidden',
       }}
-    />
+    >
+      <DayPicker
+        mode="multiple"
+        min={1}
+        selected={tripDays}
+        onDayClick={handleDayClick}
+        showOutsideDays
+        fixedWeeks
+        month={tripDays[0] || new Date()}
+        footer={footer}
+        styles={{
+          caption_label: { fontWeight: 'bold', fontSize: '0.85rem' },
+          head_cell: { color: '#4a5568', fontSize: '0.75rem', padding: 1 },
+          day: { fontSize: '0.75rem', width: 22, height: 22, lineHeight: '22px' },
+          day_selected: { 
+            backgroundColor: '#3b82f6', 
+            color: 'white',
+            fontWeight: 'bold',
+            borderRadius: '5px',
+          },
+          day_today: { color: '#3b82f6', border: '1px solid #3b82f6', borderRadius: '5px' },
+          wrapper: {
+            backgroundColor: 'black',
+            color: 'amber',
+            fontSize: '0.8rem',
+            padding: 0,
+            maxWidth: 180,
+          },
+          table: { minWidth: 0 },
+        }}
+      />
+    </div>
   );
 };
 

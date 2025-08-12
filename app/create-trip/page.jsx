@@ -2,7 +2,7 @@
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { toast } from "sonner";
 import { Loader2, Plus, Minus, MapPin, Users } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -127,92 +127,152 @@ const LocationSelector = ({ selectedLocation, onLocationChange }) => {
 
   // Load countries on component mount
   useEffect(() => {
+    let isMounted = true;
+    
     const loadCountries = async () => {
       try {
         setLoading(prev => ({ ...prev, countries: true }));
         const countryList = await GetCountries();
-        setCountries(countryList);
+        if (isMounted) {
+          setCountries(countryList);
+        }
       } catch (error) {
-        console.error("Error loading countries:", error);
-        toast.error("Failed to load countries. Please refresh the page.");
+        if (isMounted) {
+          console.error("Error loading countries:", error);
+          toast.error("Failed to load countries. Please refresh the page.");
+        }
       } finally {
-        setLoading(prev => ({ ...prev, countries: false }));
+        if (isMounted) {
+          setLoading(prev => ({ ...prev, countries: false }));
+        }
       }
     };
 
     loadCountries();
+    
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   // Load states when country changes
   useEffect(() => {
+    let isMounted = true;
+    
     const loadStates = async () => {
       if (!selectedCountry) {
-        setStates([]);
-        setSelectedState(null);
-        setCities([]);
-        setSelectedCity(null);
+        if (isMounted) {
+          setStates([]);
+          setSelectedState(null);
+          setCities([]);
+          setSelectedCity(null);
+        }
         return;
       }
 
       try {
-        setLoading(prev => ({ ...prev, states: true }));
+        if (isMounted) {
+          setLoading(prev => ({ ...prev, states: true }));
+        }
         const stateList = await GetState(selectedCountry.id);
-        setStates(stateList || []);
-        setSelectedState(null);
-        setCities([]);
-        setSelectedCity(null);
+        if (isMounted) {
+          setStates(stateList || []);
+          setSelectedState(null);
+          setCities([]);
+          setSelectedCity(null);
+        }
       } catch (error) {
-        console.error("Error loading states:", error);
-        toast.error("Failed to load states/provinces.");
-        setStates([]);
+        if (isMounted) {
+          console.error("Error loading states:", error);
+          toast.error("Failed to load states/provinces.");
+          setStates([]);
+        }
       } finally {
-        setLoading(prev => ({ ...prev, states: false }));
+        if (isMounted) {
+          setLoading(prev => ({ ...prev, states: false }));
+        }
       }
     };
 
     loadStates();
+    
+    return () => {
+      isMounted = false;
+    };
   }, [selectedCountry]);
 
   // Load cities when state changes
   useEffect(() => {
+    let isMounted = true;
+    
     const loadCities = async () => {
       if (!selectedState) {
-        setCities([]);
-        setSelectedCity(null);
+        if (isMounted) {
+          setCities([]);
+          setSelectedCity(null);
+        }
         return;
       }
 
       try {
-        setLoading(prev => ({ ...prev, cities: true }));
+        if (isMounted) {
+          setLoading(prev => ({ ...prev, cities: true }));
+        }
         const cityList = await GetCity(selectedCountry.id, selectedState.id);
-        setCities(cityList || []);
-        setSelectedCity(null);
+        if (isMounted) {
+          setCities(cityList || []);
+          setSelectedCity(null);
+        }
       } catch (error) {
-        console.error("Error loading cities:", error);
-        toast.error("Failed to load cities.");
-        setCities([]);
+        if (isMounted) {
+          console.error("Error loading cities:", error);
+          toast.error("Failed to load cities.");
+          setCities([]);
+        }
       } finally {
-        setLoading(prev => ({ ...prev, cities: false }));
+        if (isMounted) {
+          setLoading(prev => ({ ...prev, cities: false }));
+        }
       }
     };
 
     loadCities();
+    
+    return () => {
+      isMounted = false;
+    };
   }, [selectedState, selectedCountry]);
 
-  // Update selected location when city changes
+  // FIXED: Update selected location when city changes - with proper dependency management
   useEffect(() => {
     if (selectedCity && selectedState && selectedCountry) {
       const locationString = `${selectedCity.name}, ${selectedState.name}, ${selectedCountry.name}`;
-      onLocationChange(locationString);
-    } else if (selectedState && selectedCountry && cities.length === 0) {
+      if (locationString !== selectedLocation) {
+        onLocationChange(locationString);
+      }
+    } else if (selectedState && selectedCountry && cities.length === 0 && !loading.cities) {
       // If no cities available, use state and country
       const locationString = `${selectedState.name}, ${selectedCountry.name}`;
-      onLocationChange(locationString);
-    } else if (selectedCountry && states.length === 0) {
+      if (locationString !== selectedLocation) {
+        onLocationChange(locationString);
+      }
+    } else if (selectedCountry && states.length === 0 && !loading.states) {
       // If no states available, use just country
-      onLocationChange(selectedCountry.name);
+      if (selectedCountry.name !== selectedLocation) {
+        onLocationChange(selectedCountry.name);
+      }
     }
-  }, [selectedCity, selectedState, selectedCountry, cities.length, states.length, onLocationChange]);
+  }, [
+    selectedCity, 
+    selectedState, 
+    selectedCountry, 
+    cities.length, 
+    states.length, 
+    loading.cities, 
+    loading.states,
+    selectedLocation,
+    onLocationChange
+  ]);
 
   const handleCountryChange = (e) => {
     const countryId = parseInt(e.target.value);
@@ -435,18 +495,24 @@ const Page = () => {
     }
   }, [isLoaded, isSignedIn, router]);
 
-  const handleFormInputChange = (name, value) => {
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
+  // FIXED: Properly memoized callback functions
+  const handleFormInputChange = useCallback((field, value) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  }, []);
 
-  const handleTravellerChange = (travellerType) => {
-    const selectedTraveller = SelectTravellersList.find(t => t.title === travellerType);
+  const onLocationChange = useCallback((location) => {
+    handleFormInputChange("place", location);
+  }, [handleFormInputChange]);
+
+  // FIXED: Added missing handleTravellerChange function
+  const handleTravellerChange = useCallback((travellerType) => {
+    const traveller = SelectTravellersList.find(t => t.title === travellerType);
     setFormData(prev => ({
       ...prev,
       travellers: travellerType,
-      numberOfMembers: selectedTraveller?.defaultMembers || prev.numberOfMembers
+      numberOfMembers: traveller ? traveller.defaultMembers : prev.numberOfMembers
     }));
-  };
+  }, []);
 
   const handleGenerateTrip = async () => {
     if (
@@ -659,7 +725,7 @@ const Page = () => {
 
       // For demo purposes, we'll just show the success message
       // In your actual implementation, save to MongoDB and navigate
-      /*
+      
       try {
         const response = await fetch('/api/trips', {
           method: 'POST',
@@ -677,7 +743,7 @@ const Page = () => {
         console.error('Error saving trip:', saveError);
         toast.error(`Failed to save trip: ${saveError.message}`);
       }
-      */
+      
 
     } catch (err) {
       console.error("Error generating trip:", err);
@@ -731,7 +797,7 @@ const Page = () => {
             </div>
             <LocationSelector
               selectedLocation={formData.place}
-              onLocationChange={(location) => handleFormInputChange("place", location)}
+              onLocationChange={onLocationChange}
             />
           </div>
 
